@@ -1,5 +1,5 @@
 import { MantineProvider } from "@mantine/core";
-import localFont from "next/font/local";
+import { Roboto, Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "./_components/Header";
 import Footer from "./_components/Footer";
@@ -7,16 +7,12 @@ import "@mantine/carousel/styles.css";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
+const poppins = Poppins({ weight: ["400", "500", "700"], subsets: ["latin"] });
 
 export const metadata = {
   title: "Ticketist",
@@ -27,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        className={`${roboto.className} ${poppins.className}  antialiased flex flex-col min-h-screen`}
       >
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <Header />

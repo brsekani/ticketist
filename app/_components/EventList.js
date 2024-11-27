@@ -9,6 +9,7 @@ import {
   MdFestival,
   MdNaturePeople,
 } from "react-icons/md";
+import { FaEllipsisH } from "react-icons/fa";
 
 function EventList() {
   const popularEvents = [
@@ -24,10 +25,13 @@ function EventList() {
       name: "Food Festivals",
       icon: <MdRestaurantMenu size={25} color="#32BC9B" />,
     },
-    { name: "Music Festivals", icon: <MdFestival size={25} color="#32BC9B" /> },
     {
       name: "Nature Trips",
       icon: <MdNaturePeople size={25} color="#32BC9B" />,
+    },
+    {
+      name: "Others",
+      icon: <FaEllipsisH size={25} color="#32BC9B" />,
     },
   ];
 
