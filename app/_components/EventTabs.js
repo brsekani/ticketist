@@ -39,6 +39,9 @@ function EventTabs({ events, location }) {
               layout="fill"
               objectFit="cover"
               className="rounded-t-lg"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+              priority
             />
           </div>
 
@@ -73,7 +76,7 @@ function EventTabs({ events, location }) {
         </span>{" "}
         Oops!
       </div>
-      <p className="text-lg text-gray-600 mb-6">
+      <p className="mb-6 text-lg text-gray-600">
         No events are available at the moment. But don't worry, something fun is
         coming soon!
       </p>

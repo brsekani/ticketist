@@ -90,6 +90,8 @@ export default function page({ params }) {
           src={concertImage}
           alt="Concert"
           className="w-full mb-6 rounded-md"
+          placeholder="blur"
+          priority
         />
 
         <div className="space-y-4">

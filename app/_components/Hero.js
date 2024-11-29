@@ -12,6 +12,8 @@ function Hero() {
         alt="Concert Image"
         layout="fill"
         placeholder="blur"
+        blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+        priority
       />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-5 text-center text-white bg-black bg-opacity-50">
         <h1 className="text-4xl font-bold leading-tight sm:text-5xl sm:w-2/4">

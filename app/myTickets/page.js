@@ -3,6 +3,7 @@
 import { Tabs } from "@mantine/core";
 import image from "@/public/concertImage.jpg";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Page() {
   const events = [
@@ -52,24 +53,27 @@ export default function Page() {
         </Tabs.List>
 
         <Tabs.Panel value="All">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3">
             {events.map((event) => (
               <Link href="/myTickets/TicketQRCode" key={event.id}>
                 <div
                   key={event.id}
-                  className="bg-white shadow-md rounded-lg overflow-hidden"
+                  className="overflow-hidden bg-white rounded-lg shadow-md"
                 >
-                  <img
+                  <Image
                     src={event.image}
                     alt={event.name}
-                    className="w-full h-40 object-cover"
+                    className="object-cover w-full h-40"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+                    priority
                   />
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {event.name}
                     </h3>
-                    <p className="text-gray-600 text-sm">{event.venue}</p>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-sm text-gray-600">{event.venue}</p>
+                    <p className="text-sm text-gray-600">
                       {event.date} at {event.time}
                     </p>
                   </div>
@@ -81,23 +85,23 @@ export default function Page() {
 
         <Tabs.Panel value="Active">
           {" "}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3">
             {events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
+                className="overflow-hidden bg-white rounded-lg shadow-md"
               >
                 <img
                   src={event.image}
                   alt={event.name}
-                  className="w-full h-40 object-cover"
+                  className="object-cover w-full h-40"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-800">
                     {event.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{event.venue}</p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-sm text-gray-600">{event.venue}</p>
+                  <p className="text-sm text-gray-600">
                     {event.date} at {event.time}
                   </p>
                 </div>
@@ -107,23 +111,23 @@ export default function Page() {
         </Tabs.Panel>
         <Tabs.Panel value="Pending">
           {" "}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3">
             {events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
+                className="overflow-hidden bg-white rounded-lg shadow-md"
               >
                 <img
                   src={event.image}
                   alt={event.name}
-                  className="w-full h-40 object-cover"
+                  className="object-cover w-full h-40"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-800">
                     {event.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{event.venue}</p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-sm text-gray-600">{event.venue}</p>
+                  <p className="text-sm text-gray-600">
                     {event.date} at {event.time}
                   </p>
                 </div>
@@ -133,23 +137,23 @@ export default function Page() {
         </Tabs.Panel>
         <Tabs.Panel value="Used">
           {" "}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3">
             {events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
+                className="overflow-hidden bg-white rounded-lg shadow-md"
               >
                 <img
                   src={event.image}
                   alt={event.name}
-                  className="w-full h-40 object-cover"
+                  className="object-cover w-full h-40"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-800">
                     {event.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{event.venue}</p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-sm text-gray-600">{event.venue}</p>
+                  <p className="text-sm text-gray-600">
                     {event.date} at {event.time}
                   </p>
                 </div>
@@ -159,23 +163,23 @@ export default function Page() {
         </Tabs.Panel>
         <Tabs.Panel value="Expired">
           {" "}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 md:grid-cols-3">
             {events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white shadow-md rounded-lg overflow-hidden"
+                className="overflow-hidden bg-white rounded-lg shadow-md"
               >
                 <img
                   src={event.image}
                   alt={event.name}
-                  className="w-full h-40 object-cover"
+                  className="object-cover w-full h-40"
                 />
                 <div className="p-4">
                   <h3 className="text-lg font-semibold text-gray-800">
                     {event.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{event.venue}</p>
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-sm text-gray-600">{event.venue}</p>
+                  <p className="text-sm text-gray-600">
                     {event.date} at {event.time}
                   </p>
                 </div>

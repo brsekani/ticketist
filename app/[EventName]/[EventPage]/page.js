@@ -22,6 +22,9 @@ export default async function Page({ params }) {
           className="object-cover object-center"
           quality={100}
           alt="Event banner"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+          priority
         />
       </div>
 

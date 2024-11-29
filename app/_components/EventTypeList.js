@@ -19,6 +19,9 @@ async function EventTypeList({ eventName }) {
                 layout="fill"
                 objectFit="cover"
                 className="rounded-t-lg"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+                priority
               />
             </div>
 

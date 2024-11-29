@@ -58,6 +58,7 @@ export default async function Page({ params }) {
           layout="fill"
           objectFit="cover"
           priority
+          placeholder="blur"
           className="brightness-75"
         />
         <div className="absolute inset-0 sm:top-[55%] sm:left-20 top-1/2 text-center sm:text-start">

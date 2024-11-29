@@ -15,7 +15,7 @@ export async function getEvent(event_id) {
 
   if (error) {
     console.log(error);
-    throw new Error("event can not be loaded");
+    throw new Error("Event can not be loaded");
   }
 
   return data;
@@ -34,7 +34,6 @@ export async function getEventsByLocation(location) {
 }
 
 export async function getEventsByType(event_type) {
-  console.log(event_type);
   const { data, error } = await supabase
     .from("Events")
     .select("*")
@@ -42,6 +41,7 @@ export async function getEventsByType(event_type) {
 
   // For testing
   // await new Promise((res) => setTimeout(res, 10000));
+  if (error) throw new Error("Event can not be loaded");
 
   return data;
 }
