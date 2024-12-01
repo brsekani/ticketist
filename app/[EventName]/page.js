@@ -18,6 +18,7 @@ import { getEvents, getEventsByType } from "../_lib/date-service";
 import { Suspense } from "react";
 import Spinner from "../_components/Spinner";
 import EventTypeList from "../_components/EventTypeList";
+import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {
   const { EventName } = await params;
@@ -41,13 +42,15 @@ export default async function Page({ params }) {
         return NatureTripsImage;
       case "Sports":
         return SportImage;
-
-      default:
-        return "/images/events/default.jpg"; // Fallback image
     }
   };
 
   const image = getImage(decodedEventName);
+
+  // If the event type is invalid, render a 404 page
+  if (!image) {
+    notFound(); // Triggers the 404 page
+  }
 
   return (
     <div className="w-full">
@@ -58,7 +61,6 @@ export default async function Page({ params }) {
           layout="fill"
           objectFit="cover"
           priority
-          placeholder="blur"
           className="brightness-75"
         />
         <div className="absolute inset-0 sm:top-[55%] sm:left-20 top-1/2 text-center sm:text-start">

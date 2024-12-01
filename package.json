@@ -14,6 +14,7 @@
     "@mantine/core": "^7.13.5",
     "@mantine/dates": "^7.13.5",
     "@mantine/hooks": "^7.13.5",
+    "@mantine/notifications": "^7.14.3",
     "@supabase/supabase-js": "^2.46.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",

@@ -6,6 +6,8 @@ import Footer from "./_components/Footer";
 import "@mantine/carousel/styles.css";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import "@mantine/notifications/styles.css";
+import { Notifications } from "@mantine/notifications";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -26,6 +28,7 @@ export default function RootLayout({ children }) {
         className={`${roboto.className} ${poppins.className}  antialiased flex flex-col min-h-screen`}
       >
         <MantineProvider withGlobalStyles withNormalizeCSS>
+          <Notifications position="top-right" />
           <Header />
           <main>{children}</main>
           <Footer />

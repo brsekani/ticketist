@@ -1,46 +1,32 @@
-"use client"; // Ensure this is a client component
+"use client";
 
 import { NativeSelect } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import { FaLocationDot } from "react-icons/fa6";
 
-const genres = [
-  { name: "All" },
-  { name: "Rock" },
-  { name: "Jazz" },
-  { name: "Pop" },
-  { name: "Classical" },
-  { name: "Hip Hop" },
-  { name: "Electronic" },
-  { name: "Reggae" },
-];
-
 export default function LocationDateSearch() {
+  const router = useRouter();
   const [location, setLocation] = useState("");
   const [date, setDate] = useState([null, null]);
-  // const [genre, setGenre] = useState("All");
-
-  const today = new Date();
 
   const handleSearch = () => {
-    console.log("Searching with:", { location, date });
+    const params = new URLSearchParams();
+
+    if (location) params.append("location", location);
+    if (date[0]) params.append("startDate", date[0].toISOString());
+    if (date[1]) params.append("endDate", date[1].toISOString());
+
+    router.push(`?${params.toString()}`);
   };
 
-  useEffect(
-    () => {
-      handleSearch();
-    },
-    [location, date],
-    handleSearch
-  );
-
   return (
-    <div className="flex flex-col items-center gap-3 px-5 py-6 sm:gap-6 sm:px-10">
-      <div className="w-full space-y-6 sm:flex sm:flex-row sm:gap-10 sm:space-y-0">
-        {/* Location Selector */}
-        <div className="w-full sm:w-1/3">
+    <div className="w-full max-w-4xl p-4 mx-auto mt-4 bg-white rounded-lg shadow-md sm:p-8">
+      <div className="grid gap-3 sm:gap-6 sm:grid-cols-3">
+        {/* Location Select */}
+        <div>
           <label
             htmlFor="location"
             className="block mb-2 text-sm font-semibold text-gray-700"
@@ -66,13 +52,13 @@ export default function LocationDateSearch() {
             size="md"
             classNames={{
               input:
-                "p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
+                "p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
             }}
           />
         </div>
 
-        {/* Date Range Picker */}
-        <div className="w-full sm:w-1/3">
+        {/* Date Picker */}
+        <div>
           <label
             htmlFor="date"
             className="block mb-2 text-sm font-semibold text-gray-700"
@@ -84,42 +70,28 @@ export default function LocationDateSearch() {
             leftSection={<SlCalender />}
             leftSectionPointerEvents="none"
             value={date}
-            onChange={setDate}
-            placeholder="Select Date"
+            onChange={(value) => setDate(value)}
+            placeholder="Select Date Range"
             type="range"
             clearable
             radius="md"
             size="md"
-            minDate={today}
             classNames={{
               input:
-                "p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
+                "p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
             }}
           />
         </div>
 
-        {/* Genre Selector */}
-        {/* <div className="w-full sm:w-1/3">
-          <label
-            htmlFor="genre"
-            className="block mb-2 text-sm font-semibold text-gray-700"
+        {/* Search Button */}
+        <div className="flex items-end">
+          <button
+            onClick={handleSearch}
+            className="w-full px-4 py-2 text-sm font-semibold text-white bg-[#32BC9B] rounded-lg hover:bg-[#28a083] transition-colors"
           >
-            Select Music Genre
-          </label>
-          <NativeSelect
-            id="genre"
-            value={genre}
-            onChange={(event) => setGenre(event.currentTarget.value)}
-            data={genres.map((item) => item.name)}
-            placeholder="Select Genre"
-            radius="md"
-            size="md"
-            classNames={{
-              input:
-                "p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
-            }}
-          />
-        </div> */}
+            Search
+          </button>
+        </div>
       </div>
     </div>
   );

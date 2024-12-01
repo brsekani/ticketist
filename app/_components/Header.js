@@ -39,7 +39,7 @@ function Header() {
         {/* Desktop Navigation */}
         <nav className="flex-row items-center hidden gap-8 text-sm lg:flex">
           <ul className="flex gap-8">
-            <Link href={"myTickets"}>
+            <Link href={"/myTickets"}>
               <li className="cursor-pointer hover:text-[#32BC9B]">
                 My Tickets
               </li>
@@ -101,12 +101,14 @@ function Header() {
           >
             <ul className="flex flex-col items-center gap-8 text-lg font-semibold text-gray-700">
               {/*My Tickets Item */}
-              <li
-                className="cursor-pointer hover:text-[#32BC9B] transition-all duration-300 ease-in-out w-full text-center py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                My Tickets
-              </li>
+              <Link href={"/myTickets"}>
+                <li
+                  className="cursor-pointer hover:text-[#32BC9B] transition-all duration-300 ease-in-out w-full text-center py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  My Tickets
+                </li>
+              </Link>
 
               {/* Help Item */}
               <li
