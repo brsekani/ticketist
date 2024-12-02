@@ -1,8 +1,6 @@
-// app/page.js
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import concertImage from "@/public/concertImage1.jpg";
-import LocationDateSearch from "../_components/LocationDateSearch";
-
 import DefaultImage from "@/public/concertImage.jpg";
 import ConcertsImage from "@/public/concertImage1.jpg";
 import MovieImage from "@/public/movieImage.jpg";
@@ -12,13 +10,20 @@ import ArtExhibitsImage from "@/public/artExhibition.jpg";
 import FoodFestivalsImage from "@/public/foodFestival.jpg";
 import MusicFestivalsImage from "@/public/musicFestivalImage.jpg";
 import NatureTripsImage from "@/public/natureTripImage.jpg";
-// import image from "@/public/concertImage8.jpg";
-
 import { getEvents, getEventsByType } from "../_lib/date-service";
 import { Suspense } from "react";
 import Spinner from "../_components/Spinner";
-import EventTypeList from "../_components/EventTypeList";
-import { notFound } from "next/navigation";
+
+// Lazy-load components
+const LocationDateSearch = dynamic(
+  () => import("../_components/LocationDateSearch"),
+  {
+    loading: () => <Spinner />, // Optional: Show a spinner while loading
+  }
+);
+const EventTypeList = dynamic(() => import("../_components/EventTypeList"), {
+  suspense: true, // Enable suspense if needed
+});
 
 export default async function Page({ params }) {
   const { EventName } = await params;
@@ -47,9 +52,8 @@ export default async function Page({ params }) {
 
   const image = getImage(decodedEventName);
 
-  // If the event type is invalid, render a 404 page
   if (!image) {
-    notFound(); // Triggers the 404 page
+    notFound();
   }
 
   return (
@@ -62,6 +66,7 @@ export default async function Page({ params }) {
           objectFit="cover"
           priority
           className="brightness-75"
+          // loading="lazy"
         />
         <div className="absolute inset-0 sm:top-[55%] sm:left-20 top-1/2 text-center sm:text-start">
           <h1 className="text-4xl font-bold text-white sm:px-4 sm:py-2 md:text-5xl">
@@ -70,7 +75,7 @@ export default async function Page({ params }) {
         </div>
       </div>
 
-      {/* Render the client component */}
+      {/* Render lazy-loaded client component */}
       <LocationDateSearch />
 
       <Suspense fallback={<Spinner />}>

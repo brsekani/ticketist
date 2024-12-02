@@ -1,13 +1,26 @@
 "use client";
 
-import Image from "next/image";
-import concertImage from "@/public/concertImage.jpg";
+import Spinner from "@/app/_components/Spinner";
+// import SpinnerMini from "@/app/_components/SpinnerMini";
+// import EventImage from "@/app/_components/eventImage";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { useRouter } from "next/navigation";
 
-export default function page({ params }) {
-  const numberOfTickets = 3;
-  const router = useRouter();
+// import EventImage from "@/app/_components/eventImage";
+
+export default function Page({ params }) {
+  const searchParams = useSearchParams();
+
+  const EventImage = dynamic(() => import("@/app/_components/EventImage"), {
+    suspense: true, // Enable suspense if needed
+  });
+
+  // Retrieve the 'NOT' query parameter from the URL (which holds the quantity)
+  const quantity = searchParams.get("NOT") || 1; // Fallback value if 'NOT' is not available
+
+  const numberOfTickets = parseInt(quantity, 10); // Ensure quantity is a number
 
   // Generate an array of ticket data based on the number of tickets
   const tickets = Array.from(
@@ -21,16 +34,17 @@ export default function page({ params }) {
         <div className="border-y border-[#C2C2C2] h-24 flex items-center px-10">
           <IoArrowBackOutline
             className="cursor-pointer"
-            size={40}
-            onClick={() => router.back()}
+            size={30}
+            onClick={() => window.history.back()} // Or use router.back() in client-side navigation
           />
-          <p className="mx-auto text-4xl font-semibold">Checkout</p>
+          <p className="mx-auto text-2xl font-semibold sm:text-4xl">Checkout</p>
         </div>
 
         <form className="flex flex-col w-full gap-3 px-10">
           <div className="w-full">
-            <h1 className="py-5 text-3xl font-meduim">Contact information</h1>
-
+            <h1 className="py-5 text-xl font-medium sm:text-3xl">
+              Contact information
+            </h1>
             <div className="flex flex-col gap-6">
               <div className="flex flex-row gap-10">
                 <input
@@ -86,21 +100,17 @@ export default function page({ params }) {
         </form>
       </div>
       <div className="sm:w-[30%] w-full bg-[#F2F2F2] p-6 rounded-lg shadow-md h-full">
-        <Image
-          src={concertImage}
-          alt="Concert"
-          className="w-full mb-6 rounded-md"
-          placeholder="blur"
-          priority
-        />
+        <Suspense fallback={<Spinner />}>
+          <EventImage params={params} />
+        </Suspense>
 
         <div className="space-y-4">
           <h1 className="text-xl font-semibold text-gray-800">Order Summary</h1>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between text-gray-700">
-              <p>2 x General Admission</p>
-              <p>$50</p>
+              <p>{numberOfTickets} x General Admission</p>
+              <p>${50 * numberOfTickets}</p>
             </div>
             <div className="flex items-center justify-between text-gray-700">
               <p>Delivery - eTicket</p>
@@ -112,7 +122,7 @@ export default function page({ params }) {
 
           <div className="flex items-center justify-between font-semibold text-gray-800">
             <p>Total</p>
-            <p>$100</p>
+            <p>${50 * numberOfTickets + 50}</p>
           </div>
 
           <button className="w-full mt-4 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-lg hover:bg-[#28a083] transition duration-200 ease-in-out">

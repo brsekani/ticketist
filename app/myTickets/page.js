@@ -65,8 +65,8 @@ export default function Page() {
                     alt={event.name}
                     className="object-cover w-full h-40"
                     placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
-                    priority
+                    blurDataURL="data:image/jpeg;base64,[base64-string]" // Replace with actual base64 string
+                    loading="lazy" // Enables lazy loading
                   />
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-800">
@@ -91,7 +91,7 @@ export default function Page() {
                 key={event.id}
                 className="overflow-hidden bg-white rounded-lg shadow-md"
               >
-                <img
+                <Image
                   src={event.image}
                   alt={event.name}
                   className="object-cover w-full h-40"
@@ -117,7 +117,7 @@ export default function Page() {
                 key={event.id}
                 className="overflow-hidden bg-white rounded-lg shadow-md"
               >
-                <img
+                <Image
                   src={event.image}
                   alt={event.name}
                   className="object-cover w-full h-40"
@@ -143,7 +143,7 @@ export default function Page() {
                 key={event.id}
                 className="overflow-hidden bg-white rounded-lg shadow-md"
               >
-                <img
+                <Image
                   src={event.image}
                   alt={event.name}
                   className="object-cover w-full h-40"
@@ -169,7 +169,7 @@ export default function Page() {
                 key={event.id}
                 className="overflow-hidden bg-white rounded-lg shadow-md"
               >
-                <img
+                <Image
                   src={event.image}
                   alt={event.name}
                   className="object-cover w-full h-40"

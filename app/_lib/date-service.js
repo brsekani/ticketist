@@ -81,3 +81,18 @@ export async function searchByInput(query) {
 
   return data;
 }
+
+export async function getEventImage(event_id) {
+  const { data, error } = await supabase
+    .from("Events")
+    .select("image_url") // Select only the image column
+    .eq("event_id", event_id);
+
+  if (error) throw new Error("Event can not be loaded");
+
+  if (data && data.length > 0) {
+    return data[0].image_url; // Return the image URL
+  } else {
+    throw new Error("Event not found");
+  }
+}
