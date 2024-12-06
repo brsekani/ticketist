@@ -34,36 +34,38 @@ export async function getEventsByLocation(location) {
   return data;
 }
 
-export async function getEventsByType(event_type, filters = {}) {
-  const { location: originalLocation, startDate, endDate } = filters; // Destructure with a new variable name
-  const location = originalLocation === "ALL" ? "" : originalLocation; // Assign a new value safely
+export async function getEventsByType(
+  event_type,
+  filters = { location: "", startDate: null, endDate: null }
+) {
+  console.log(filters);
+
+  const { location: originalLocation, startDate, endDate } = filters;
+  const location = originalLocation === "ALL" ? "" : originalLocation;
+
+  // Validate and convert startDate and endDate to ISO strings if valid
+  const StartDateWithISO =
+    startDate && startDate instanceof Date ? startDate.toISOString() : null;
+  const EndDateWithISO =
+    endDate && endDate instanceof Date ? endDate.toISOString() : null;
 
   // Initialize the query
   let query = supabase.from("Events").select("*").eq("event_type", event_type);
 
-  // Apply location filter only if location is not an empty string
-  if (location) {
-    console.log("Applying location filter:", location);
-    query = query.eq("location", location);
-  }
-
-  // Apply date range filters if provided
-  if (startDate) {
-    query = query.gte("date", startDate); // Greater than or equal to start date
-  }
-  if (endDate) {
-    query = query.lte("date", endDate); // Less than or equal to end date
-  }
+  // Apply filters
+  if (location) query = query.eq("location", location);
+  if (StartDateWithISO) query = query.gte("date", StartDateWithISO); // Start date filter
+  if (EndDateWithISO) query = query.lte("date", EndDateWithISO); // End date filter
 
   // Execute the query
   const { data, error } = await query;
 
   // Handle errors
   if (error) {
-    console.error("Error fetching events:", error);
-    throw new Error("Event cannot be loaded");
+    console.error("Error fetching events by type:", error.message);
+    throw new Error(`Failed to load events of type ${event_type}`);
   }
-
+  console.log(data);
   // Return the fetched data
   return data;
 }
@@ -77,6 +79,7 @@ export async function searchByInput(query) {
 
   if (error) throw new Error("Event can not be loaded");
 
+  console.log(filters);
   console.log(data);
 
   return data;

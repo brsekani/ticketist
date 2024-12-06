@@ -3,14 +3,31 @@
 import { NativeSelect } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SlCalender } from "react-icons/sl";
 import { FaLocationDot } from "react-icons/fa6";
 
 export default function LocationDateSearch() {
   const router = useRouter();
+
+  // States
   const [location, setLocation] = useState("");
   const [date, setDate] = useState([null, null]);
+
+  useEffect(() => {
+    const searchParamsClient = new URLSearchParams(window.location.search);
+    const locationQuery = searchParamsClient.get("location") || "";
+    const startDateQuery = searchParamsClient.get("startDate");
+    const endDateQuery = searchParamsClient.get("endDate");
+
+    setLocation(locationQuery);
+
+    // Convert startDateQuery and endDateQuery to Date objects
+    const startDate = startDateQuery ? new Date(startDateQuery) : null;
+    const endDate = endDateQuery ? new Date(endDateQuery) : null;
+
+    setDate([startDate, endDate]);
+  }, []); // Runs once on mount
 
   const handleSearch = () => {
     const params = new URLSearchParams();
