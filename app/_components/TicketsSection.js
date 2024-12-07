@@ -30,7 +30,9 @@ export default function TicketsSection({
       {/* Ticket Options */}
       <div className="mt-6 space-y-4">
         <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg shadow-sm">
-          <p className="text-lg font-semibold text-gray-700">General Admission</p>
+          <p className="text-lg font-semibold text-gray-700">
+            General Admission
+          </p>
           <div className="flex items-center space-x-3">
             {/* Quantity Selector */}
             <button
@@ -40,7 +42,9 @@ export default function TicketsSection({
             >
               -
             </button>
-            <div className="text-lg font-semibold text-gray-900">{quantity}</div>
+            <div className="text-lg font-semibold text-gray-900">
+              {quantity}
+            </div>
             <button
               onClick={handleIncrease}
               className="px-3 py-1 text-lg font-semibold text-gray-600 bg-gray-200 rounded-full hover:bg-gray-300"
@@ -64,7 +68,7 @@ export default function TicketsSection({
           href={`/${eventName}/${eventPage}/Checkout?NOT=${quantity}`} // Use dynamic quantity here
           passHref
         >
-          <button className="w-full px-6 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-lg shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out">
+          <button className="w-full px-6 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-full shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out">
             Buy Now
           </button>
         </Link>

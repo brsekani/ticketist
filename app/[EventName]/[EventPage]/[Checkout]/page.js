@@ -125,7 +125,7 @@ export default function Page({ params }) {
             <p>${50 * numberOfTickets + 50}</p>
           </div>
 
-          <button className="w-full mt-4 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-lg hover:bg-[#28a083] transition duration-200 ease-in-out">
+          <button className="w-full mt-4 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-full hover:bg-[#28a083] transition duration-200 ease-in-out">
             Pay with Paystack
           </button>
         </div>

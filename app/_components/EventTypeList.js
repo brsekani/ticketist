@@ -58,12 +58,12 @@ export default function EventTypeList({ eventName }) {
             No events are available at the moment. But don't worry, something
             fun is coming soon!
           </p>
-          <button
-            className="px-6 py-2 bg-[#32BC9B] text-white rounded-full hover:bg-[#28a083] transition-colors font-semibold"
-            onClick={handleResetFilters} // Example button functionality
+          <Link
+            className="px-6 py-3 bg-[#32BC9B] text-white rounded-full hover:bg-[#28a083] transition-colors font-semibold"
+            href={"/"}
           >
-            Reset Filters
-          </button>
+            Go to home page
+          </Link>
         </div>
       ) : (
         <div className="grid w-full gap-6 p-4 mx-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center">

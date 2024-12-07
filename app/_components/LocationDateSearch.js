@@ -1,4 +1,5 @@
 "use client";
+import "dayjs/locale/en";
 
 import { NativeSelect } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
@@ -66,7 +67,7 @@ export default function LocationDateSearch() {
             ]}
             placeholder="Select Location"
             radius="md"
-            size="md"
+            size="sm"
             classNames={{
               input:
                 "p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
@@ -92,7 +93,9 @@ export default function LocationDateSearch() {
             type="range"
             clearable
             radius="md"
-            size="md"
+            size="sm"
+            valueFormat="MMM/D/YYYY" // This controls the format of the input value
+            locale="en" // Ensures the calendar dropdown uses the same format
             classNames={{
               input:
                 "p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#32BC9B]",
@@ -104,7 +107,7 @@ export default function LocationDateSearch() {
         <div className="flex items-end">
           <button
             onClick={handleSearch}
-            className="w-full px-4 py-2 text-sm font-semibold text-white bg-[#32BC9B] rounded-lg hover:bg-[#28a083] transition-colors"
+            className="w-full px-4 py-2 text-sm font-semibold text-white bg-[#32BC9B] rounded-full hover:bg-[#28a083] transition-colors"
           >
             Search
           </button>
