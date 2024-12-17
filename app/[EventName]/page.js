@@ -31,7 +31,7 @@ export default async function Page({ params }) {
 
   const getImage = (type) => {
     switch (type) {
-      case "Concerts":
+      case "Concert":
         return ConcertsImage;
       case "Movies":
         return MovieImage;
@@ -78,7 +78,13 @@ export default async function Page({ params }) {
       {/* Render lazy-loaded client component */}
       <LocationDateSearch />
 
-      <Suspense fallback={<Spinner />}>
+      <Suspense
+        fallback={
+          <div className="h-screen">
+            <Spinner />
+          </div>
+        }
+      >
         <EventTypeList eventName={decodedEventName} />
       </Suspense>
     </div>

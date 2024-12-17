@@ -8,12 +8,16 @@ import { CgProfile } from "react-icons/cg";
 import { Indicator, Avatar, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Profile from "./Profile";
+import { auth, signOut } from "../_lib/auth";
+import { signOutAction } from "../_lib/actions";
 
-function Header() {
+function Header({ session }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
-  const loginedIn = true;
+  const loginedIn = session?.user;
   const showDownRef = useRef();
+
+  console.log(session);
 
   useEffect(() => {
     const handleClickOutOutside = (e) => {
@@ -28,6 +32,16 @@ function Header() {
       document.removeEventListener("mousedown", handleClickOutOutside);
     };
   }, [showDownRef, setIsMenuOpen]);
+
+  // const handleLogout = async () => {
+  //   try {
+  //     await signOut({
+  //       redirectTo: "/",
+  //     });
+  //   } catch (error) {
+  //     console.log("Logout failed:", error);
+  //   }
+  // };
 
   return (
     <>
@@ -51,7 +65,12 @@ function Header() {
               <Menu.Target>
                 <div className="cursor-pointer">
                   <Indicator color="#32BC9B">
-                    <Avatar variant="default" radius="sm" src="" />
+                    <Avatar
+                      variant="default"
+                      radius="sm"
+                      src={loginedIn?.image || ""}
+                      alt="User Avatar"
+                    />
                   </Indicator>
                 </div>
               </Menu.Target>
@@ -59,12 +78,13 @@ function Header() {
               <Menu.Dropdown>
                 <Menu.Item
                   leftSection={<CgProfile width={14} height={14} />}
-                  onClick={open}
+                  onClick={open} // Trigger profile functionality
                 >
                   Profile
                 </Menu.Item>
                 <Menu.Item
                   leftSection={<RiLogoutBoxLine width={14} height={14} />}
+                  onClick={signOutAction} // Trigger the signOutAction function directly
                 >
                   Logout
                 </Menu.Item>
@@ -136,13 +156,19 @@ function Header() {
                   <RiLogoutBoxLine
                     size={30}
                     className="cursor-pointer hover:text-[#32BC9B] transition-all duration-300 ease-in-out"
+                    onClick={() => {
+                      signOutAction();
+                      setIsMenuOpen(false);
+                    }}
                   />
                 </div>
               ) : (
                 <Link href="/login">
                   <button
                     className="w-full py-2 px-6 text-white bg-[#32BC9B] font-semibold rounded-3xl shadow-md hover:bg-[#28a083] transition-all duration-300 ease-in-out"
-                    onClick={() => {}}
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                    }}
                   >
                     Access
                   </button>
@@ -153,7 +179,7 @@ function Header() {
         )}
       </header>
 
-      <Profile opened={opened} close={close} />
+      <Profile opened={opened} close={close} session={session} />
     </>
   );
 }

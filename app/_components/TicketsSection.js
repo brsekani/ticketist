@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function TicketsSection({
+  session,
   eventPage,
   eventName,
   numberOfTickets,
+  eventPrice,
 }) {
   const [quantity, setQuantity] = useState(1); // Initial quantity is set to 1
-  const ticketPrice = 50;
+  const ticketPrice = eventPrice;
 
   const handleIncrease = () => {
     setQuantity((prev) => prev + 1); // Increase the quantity by 1
@@ -53,26 +55,42 @@ export default function TicketsSection({
               +
             </button>
           </div>
-          <p className="text-lg font-semibold text-gray-800">${ticketPrice}</p>
+          <p className="text-lg font-semibold text-gray-800">
+            ₦{ticketPrice.toLocaleString()}
+          </p>
         </div>
       </div>
 
       {/* Total Price */}
       <div className="mt-4 text-lg font-semibold text-gray-800">
-        Total: ${ticketPrice * quantity}
+        Total: ₦{(ticketPrice * quantity).toLocaleString()}
       </div>
 
       {/* Buy Now Button */}
-      <div className="mt-8">
-        <Link
-          href={`/${eventName}/${eventPage}/Checkout?NOT=${quantity}`} // Use dynamic quantity here
-          passHref
-        >
-          <button className="w-full px-6 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-full shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out">
-            Buy Now
-          </button>
-        </Link>
-      </div>
+      {console.log(typeof eventPrice)}
+      {session?.user ? (
+        <div className="mt-8">
+          <Link
+            href={`/${eventName}/${eventPage}/Checkout?NOT=${quantity}&price=${eventPrice}`} // Use dynamic quantity here
+            passHref
+          >
+            <button className="w-full px-6 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-full shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out">
+              Buy Now
+            </button>
+          </Link>
+        </div>
+      ) : (
+        <div className="mt-8">
+          <Link
+            href={`/login`} // Use dynamic quantity here
+            passHref
+          >
+            <button className="w-full px-6 py-3 text-lg font-semibold text-white bg-[#32BC9B] rounded-full shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out">
+              Access
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

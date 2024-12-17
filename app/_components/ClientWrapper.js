@@ -12,12 +12,14 @@ const TicketsSection = dynamic(() => import("./TicketsSection"), {
 });
 
 export default function ClientWrapper({
+  session,
   event,
   formattedDate,
   formattedTime,
   eventPage,
   eventName,
   numberOfTickets,
+  eventPrice,
 }) {
   return (
     <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
@@ -27,9 +29,11 @@ export default function ClientWrapper({
         formattedTime={formattedTime}
       />
       <TicketsSection
+        session={session}
         eventPage={eventPage}
         eventName={eventName}
         numberOfTickets={numberOfTickets}
+        eventPrice={eventPrice}
       />
     </div>
   );

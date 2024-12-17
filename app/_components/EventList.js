@@ -13,7 +13,7 @@ import { FaEllipsisH } from "react-icons/fa";
 
 function EventList() {
   const popularEvents = [
-    { name: "Concerts", icon: <MdMusicNote size={25} color="#32BC9B" /> },
+    { name: "Concert", icon: <MdMusicNote size={25} color="#32BC9B" /> },
     { name: "Movies", icon: <MdLocalMovies size={25} color="#32BC9B" /> },
     {
       name: "Comedy Shows",

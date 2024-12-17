@@ -65,7 +65,7 @@ export async function getEventsByType(
     console.error("Error fetching events by type:", error.message);
     throw new Error(`Failed to load events of type ${event_type}`);
   }
-  console.log(data);
+
   // Return the fetched data
   return data;
 }
@@ -78,9 +78,6 @@ export async function searchByInput(query) {
     .ilike("name", `%${query}%`); // Case-insensitive partial match
 
   if (error) throw new Error("Event can not be loaded");
-
-  console.log(filters);
-  console.log(data);
 
   return data;
 }
@@ -98,4 +95,27 @@ export async function getEventImage(event_id) {
   } else {
     throw new Error("Event not found");
   }
+}
+
+export async function getUser(email) {
+  const { data, error } = await supabase
+    .from("Users")
+    .select("*") // Select only the image column
+    .eq("email", email)
+    .single();
+
+  return data;
+}
+
+export async function createUser(newGuest) {
+  console.log(newGuest);
+
+  const { data, error } = await supabase.from("Users").insert([newGuest]); // Select only the image column
+
+  if (error) {
+    console.log(error);
+    throw new Error("user could not be created");
+  }
+
+  return data;
 }

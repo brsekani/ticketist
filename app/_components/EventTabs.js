@@ -12,7 +12,6 @@ const tabs = ["All Events", "Today", "Tomorrow", "This Week"];
 function EventTabs({ events, location }) {
   const getFilteredEvents = (filter) => {
     return events.filter((event) => {
-      console.log(event);
       // Parse the date string into a Date object
       const eventDate = parseISO(event.date);
 
@@ -25,7 +24,6 @@ function EventTabs({ events, location }) {
   };
 
   const renderEventCard = (event, i) => {
-    console.log(event);
     const eventDate = parseISO(event.date);
     const formattedDate = format(eventDate, "MMM dd, yyyy"); // Example: December 10, 2024
     const formattedTime = format(eventDate, "hh:mm a"); // Example: 04:30 PM
@@ -77,8 +75,8 @@ function EventTabs({ events, location }) {
         Oops!
       </div>
       <p className="mb-6 text-lg text-gray-600">
-        No events are available at the moment. But don't worry, something fun is
-        coming soon!
+        No events are available at the moment. But don&apos;t worry, something
+        fun is coming soon!
       </p>
       <button
         className="px-6 py-2 bg-[#32BC9B] text-white rounded-full hover:bg-[#28a083] transition-colors font-semibold"

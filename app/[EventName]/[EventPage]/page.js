@@ -4,9 +4,14 @@ import { format, parseISO } from "date-fns";
 import Link from "next/link";
 import { getEvent } from "@/app/_lib/date-service";
 import ClientWrapper from "@/app/_components/ClientWrapper";
+import { auth } from "@/app/_lib/auth";
 
 export default async function Page({ params }) {
-  const event = await getEvent(params.EventPage);
+  const eventPromise = getEvent(params.EventPage); // Fetch event data
+  const sessionPromise = auth(); // Fetch session data
+
+  const [event, session] = await Promise.all([eventPromise, sessionPromise]); // Wait for both promises
+
   const eventDate = parseISO(event.date);
   const formattedDate = format(eventDate, "MMMM dd, yyyy"); // Example: December 10, 2024
   const formattedTime = format(eventDate, "hh:mm a"); // Example: 04:30 PM
@@ -35,12 +40,14 @@ export default async function Page({ params }) {
 
         {/* Tickets Section */}
         <ClientWrapper
+          session={session}
           event={event}
           formattedDate={formattedDate}
           formattedTime={formattedTime}
           eventPage={params.EventPage}
           eventName={params.EventName}
           numberOfTickets={numberOfTickets}
+          eventPrice={event.price}
         />
       </div>
     </div>

@@ -49,7 +49,6 @@ function EventSearch() {
 
   const handleSelect = (selectedEvent) => {
     if (selectedEvent) {
-      console.log("Selected Event:", selectedEvent);
       router.push(`/${selectedEvent.event_type}/${selectedEvent.event_id}`);
     }
   };

@@ -55,8 +55,8 @@ export default function EventTypeList({ eventName }) {
             Oops!
           </div>
           <p className="mb-6 text-lg text-gray-600">
-            No events are available at the moment. But don't worry, something
-            fun is coming soon!
+            No events are available at the moment. But don&apos;t worry,
+            something fun is coming soon!
           </p>
           <Link
             className="px-6 py-3 bg-[#32BC9B] text-white rounded-full hover:bg-[#28a083] transition-colors font-semibold"
@@ -68,7 +68,10 @@ export default function EventTypeList({ eventName }) {
       ) : (
         <div className="grid w-full gap-6 p-4 mx-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center">
           {events.map((event) => (
-            <div key={event.event_id} className="w-full p-4">
+            <div
+              key={event.event_id}
+              className="flex items-center justify-center w-full p-4"
+            >
               <div className="flex flex-col w-full sm:w-[280px] overflow-hidden rounded-lg shadow-lg bg-white relative">
                 <div className="relative w-full h-48">
                   <Image

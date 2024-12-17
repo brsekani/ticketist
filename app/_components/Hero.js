@@ -2,8 +2,11 @@ import Image from "next/image";
 import { CiSearch } from "react-icons/ci"; // Make sure this is the correct path for your icon
 import concertImage from "../../public/concertImage8.jpg";
 import EventSearch from "./EventSearch";
+import { auth } from "../_lib/auth";
 
-function Hero() {
+async function Hero() {
+  const sessionData = await auth();
+  console.log(sessionData);
   return (
     <div className="relative w-full h-[80vh]">
       {/* Hero Background Image */}

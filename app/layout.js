@@ -8,6 +8,7 @@ import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
+import HeaderWrapper from "./_components/HeaderWrapper";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -29,7 +30,7 @@ export default function RootLayout({ children }) {
       >
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <Notifications position="top-right" />
-          <Header />
+          <HeaderWrapper />
           <main>{children}</main>
           <Footer />
         </MantineProvider>
