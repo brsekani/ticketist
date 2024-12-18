@@ -8,8 +8,9 @@ import dynamic from "next/dynamic";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { getTicketValidationSchema } from "../utils/schemas";
 import { useEffect } from "react";
+import { createTickets } from "../_lib/date-service";
 
-function CheckoutWrapper({ params, user }) {
+function CheckoutWrapper({ params, user, event_id }) {
   const searchParams = useSearchParams();
 
   const EventImage = dynamic(() => import("@/app/_components/EventImage"), {
@@ -26,6 +27,7 @@ function CheckoutWrapper({ params, user }) {
   const numberOfTickets = parseInt(quantity, 10); // Ensure quantity is a number
   const priceOfTickets = parseInt(eventPrice, 10); // Ensure quantity is a number
   const totalPrice = priceOfTickets * numberOfTickets;
+  const user_id = user.user_id;
 
   // Generate an array of ticket data based on the number of tickets
   const tickets = Array.from(
@@ -40,47 +42,75 @@ function CheckoutWrapper({ params, user }) {
   // Trigger validation and API call when 'Pay with Paystack' is clicked
   // Trigger validation and API call when 'Pay with Paystack' is clicked
   const handlePaymentClick = async () => {
-    const errors = await Promise.all(
-      formikRefs.current.map((formik) => {
-        // Trigger validation
-        formik.validateForm();
+    try {
+      // Step 1: Validate Form Inputs
+      const errors = await Promise.all(
+        formikRefs.current.map((formik) => {
+          // Mark all fields as touched
+          Object.keys(formik.values).forEach((key) =>
+            formik.setFieldTouched(key, true)
+          );
+          return formik.validateForm(); // Return validation errors
+        })
+      );
 
-        // Mark all fields as touched
-        Object.keys(formik.values).forEach((key) =>
-          formik.setFieldTouched(key, true)
-        );
+      const hasErrors = errors.some((error) => Object.keys(error).length > 0);
 
-        return formik.validateForm(); // Return the errors
-      })
-    );
+      if (hasErrors) {
+        console.error("Validation errors:", errors);
+        alert("Please fix the form validation errors before proceeding.");
+        return;
+      }
 
-    const hasErrors = errors.some((error) => Object.keys(error).length > 0);
-
-    if (!hasErrors) {
+      // Step 2: Prepare Data and Lock Scrolling
       document.body.style.overflow = "hidden";
-
       const ticketData = formikRefs.current.map((formik) => formik.values);
       console.log("Collected ticket data:", ticketData);
 
+      // Step 3: Initialize Payment Integration
       const handler = window.PaystackPop.setup({
-        key: process.env.PAYSTACK_SECRET,
+        key: "pk_test_8dcdcc1d60b3428677a3e9c34081e9bff6a84596", // Paystack public key
         email: user.email,
-        amount: totalPrice * 100,
+        amount: totalPrice * 100, // Amount in kobo
         currency: "NGN",
-        callback: function (response) {
-          console.log("Payment successful:", response);
-          alert("Payment successful! Reference: " + response.reference);
-          document.body.style.overflow = "auto";
+        callback: (response) => {
+          try {
+            console.log("Payment successful:", response);
+            alert("Payment successful! Reference: " + response.reference);
+
+            // Step 4: Generate Tickets After Payment
+            const quantity = ticketData.length; // Number of tickets
+            const email = user.email;
+
+            const tickets = createTickets(
+              email,
+              quantity,
+              event_id,
+              user_id,
+              totalPrice,
+              ticketData
+            );
+            console.log("Tickets generated successfully:", tickets);
+
+            alert("Tickets have been generated and sent to Supabase!");
+          } catch (err) {
+            console.error("Error generating tickets:", err.message);
+            alert("Payment succeeded, but ticket generation failed.");
+          } finally {
+            document.body.style.overflow = "auto"; // Re-enable scrolling
+          }
         },
-        onClose: function () {
+        onClose: () => {
           alert("Payment canceled by user.");
           document.body.style.overflow = "auto";
         },
       });
 
       handler.openIframe();
-    } else {
-      console.error("Validation errors:", errors);
+    } catch (error) {
+      console.error("Unexpected error during payment flow:", error);
+      alert("An unexpected error occurred. Please try again.");
+      document.body.style.overflow = "auto";
     }
   };
 
@@ -170,7 +200,7 @@ function CheckoutWrapper({ params, user }) {
                       <ErrorMessage
                         name={`firstName_${ticketNumber}`}
                         component="div"
-                        className="text-xs text-red-500 sm:text-sm"
+                        className="text-xs text-red-500"
                       />
                     </div>
 
@@ -184,7 +214,7 @@ function CheckoutWrapper({ params, user }) {
                       <ErrorMessage
                         name={`lastName_${ticketNumber}`}
                         component="div"
-                        className="text-xs text-red-500 sm:text-sm"
+                        className="text-xs text-red-500"
                       />
                     </div>
                   </div>
