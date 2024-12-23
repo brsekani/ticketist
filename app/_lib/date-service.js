@@ -218,13 +218,11 @@ export async function createTickets(
   // Step 1: Generate orders with unique codes and QR codes
   for (let i = 0; i < quantity; i++) {
     const uniqueCode = await ensureUniqueCode();
-    const qrCode = await createQrCode(uniqueCode);
 
     orders.push({
       event_id: Number(event_id),
       user_id: Number(user_id),
       total_price: String(totalPrice),
-      qrCode,
       uniqueCode,
     });
   }
@@ -261,7 +259,6 @@ export async function createTickets(
       order_id,
       event_id: Number(event_id),
       user_id: Number(user_id),
-      qr_code_url: order.qrCode,
       status: false,
       attendee_firstname: firstName,
       attendee_lastname: lastName,

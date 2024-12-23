@@ -9,6 +9,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { getTicketValidationSchema } from "../utils/schemas";
 import { useEffect } from "react";
 import { createTickets } from "../_lib/date-service";
+import { Bounce, toast } from "react-toastify";
 
 function CheckoutWrapper({ params, user, event_id }) {
   const searchParams = useSearchParams();
@@ -90,6 +91,19 @@ function CheckoutWrapper({ params, user, event_id }) {
               totalPrice,
               ticketData
             );
+
+            toast.success("Tickets generated successfully.", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              transition: Bounce,
+            });
+
             console.log("Tickets generated successfully:", tickets);
 
             alert("Tickets have been generated and sent to Supabase!");

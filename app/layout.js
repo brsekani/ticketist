@@ -9,6 +9,7 @@ import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
 import HeaderWrapper from "./_components/HeaderWrapper";
+import { ToastContainer } from "react-toastify";
 
 const roboto = Roboto({
   weight: ["400", "500", "700"],
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
           <HeaderWrapper />
           <main>{children}</main>
           <Footer />
+          <ToastContainer />
         </MantineProvider>
       </body>
     </html>

@@ -17,12 +17,41 @@ function TicketQRCodePageWrapper({ ticketDetails }) {
     });
   };
 
+  // Determine ticket status and styles
+  const getStatusBadge = () => {
+    switch (ticketDetails.status) {
+      case true:
+        return (
+          <span className="px-4 py-1 text-sm font-semibold text-white bg-green-600 rounded-full">
+            Active
+          </span>
+        );
+      case false:
+        return (
+          <span className="px-4 py-1 text-sm font-semibold text-white bg-gray-500 rounded-full">
+            Used
+          </span>
+        );
+      // case "expired":
+      //   return (
+      //     <span className="px-4 py-1 text-sm font-semibold text-white bg-red-600 rounded-full">
+      //       Expired
+      //     </span>
+      //   );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#F2F2F2] p-4">
       <div
         ref={ticketRef}
-        className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg"
+        className="relative w-full max-w-lg p-6 bg-white rounded-lg shadow-lg"
       >
+        {/* Ticket Status */}
+        <div className="absolute top-4 right-4">{getStatusBadge()}</div>
+
         <div className="flex flex-col items-center text-center">
           <h1 className="mb-2 text-2xl font-bold text-gray-800 capitalize">
             {ticketDetails.eventName}

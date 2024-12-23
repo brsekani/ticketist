@@ -28,6 +28,7 @@ export default async function TicketQRCodePage({ params }) {
     time: formattedTime,
     qrCodeValue: data.unique_code, // Unique ticket link or ID
     attendeeName: `${attendeeFirstName} ${attendeeLastName}`,
+    status: data.status,
   };
 
   return <TicketQRCodePageWrapper ticketDetails={ticketDetails} />;
