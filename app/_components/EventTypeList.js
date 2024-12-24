@@ -1,50 +1,75 @@
 "use client";
 
-import { useSearchParams } from "next/navigation"; // Importing useSearchParams hook
-import { useEffect, useState } from "react";
-import { CiHeart } from "react-icons/ci";
+import { useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useState } from "react";
+import { FaHeart } from "react-icons/fa6";
 import { format } from "date-fns";
 import Link from "next/link";
 import Image from "next/image";
 import { getEventsByType } from "../_lib/date-service";
-import Spinner from "../_components/Spinner"; // Import Spinner component
-import { useRouter } from "next/navigation";
+import Spinner from "../_components/Spinner";
+import { toggleFavorite } from "../_lib/actions";
 
-export default function EventTypeList({ eventName }) {
+export default function EventTypeList({ eventName, user }) {
   const searchParamsClient = useSearchParams();
-  const router = useRouter();
-
-  const location = searchParamsClient.get("location") || "ALL"; // Default value "ALL"
+  const location = searchParamsClient.get("location") || "All";
   const startDate = searchParamsClient.get("startDate") || "";
   const endDate = searchParamsClient.get("endDate") || "";
 
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
+  const user_id = user?.user_id;
+
+  const handleFav = async (user_id, event_id, isFavorite) => {
+    // Optimistically update the UI
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.event_id === event_id
+          ? { ...event, isFavorite: !event.isFavorite }
+          : event
+      )
+    );
+
+    try {
+      // Send the actual toggle request
+      await toggleFavorite(user_id, event_id, isFavorite);
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+
+      // Revert the UI update if the request fails
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.event_id === event_id
+            ? { ...event, isFavorite: isFavorite } // Revert to the original state
+            : event
+        )
+      );
+    }
+  };
 
   useEffect(() => {
     const fetchFilteredEvents = async () => {
-      setLoading(true); // Set loading to true when the fetch starts
-      const data = await getEventsByType(eventName, {
-        location,
-        startDate,
-        endDate,
-      });
+      setLoading(true);
+      const data = await getEventsByType(
+        eventName,
+        {
+          location,
+          startDate,
+          endDate,
+        },
+        user_id
+      );
       setEvents(data);
-      setLoading(false); // Set loading to false once data is fetched
+      setLoading(false);
     };
     fetchFilteredEvents();
-  }, [eventName, location, startDate, endDate]);
-
-  function handleResetFilters() {
-    // Reset query parameters
-    router.push(`/${eventName}`);
-  }
+  }, [eventName, location, startDate, endDate, user_id]);
 
   return (
     <>
       {loading ? (
         <div className="flex justify-center items-center w-full h-[50vh]">
-          <Spinner /> {/* Show spinner while loading */}
+          <Spinner />
         </div>
       ) : events.length === 0 ? (
         <div className="w-full text-center p-8 bg-[#f9fafb] rounded-xl shadow-lg transform transition-all hover:scale-105 duration-300 ease-in-out">
@@ -81,13 +106,23 @@ export default function EventTypeList({ eventName }) {
                     objectFit="cover"
                     className="rounded-t-lg"
                     placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+                    blurDataURL="data:image/jpeg;base64,[base64-string]"
                     priority
                   />
                 </div>
 
-                <div className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black">
-                  <CiHeart />
+                <div
+                  className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black"
+                  onClick={() =>
+                    startTransition(() => {
+                      handleFav(user_id, event.event_id, event.isFavorite);
+                    })
+                  }
+                >
+                  <FaHeart
+                    size={20}
+                    color={event.isFavorite ? "#32BC9B" : "gray"}
+                  />
                 </div>
 
                 <div className="flex flex-col justify-between gap-2 p-4">
