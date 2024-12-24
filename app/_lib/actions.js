@@ -2,9 +2,9 @@
 
 import { signIn, signOut } from "./auth";
 
-export async function signInAction() {
+export async function signInAction(currentPath) {
   await signIn("google", {
-    redirectTo: "/",
+    callbackUrl: currentPath, // Redirect to the current path
   });
 }
 

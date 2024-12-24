@@ -45,18 +45,24 @@ export async function getEventsByType(
   const location = originalLocation === "ALL" ? "" : originalLocation;
 
   // Validate and convert startDate and endDate to ISO strings if valid
-  const StartDateWithISO =
-    startDate && startDate instanceof Date ? startDate.toISOString() : null;
-  const EndDateWithISO =
-    endDate && endDate instanceof Date ? endDate.toISOString() : null;
+  // const StartDateWithISO =
+  //   startDate && startDate instanceof Date ? startDate.toISOString() : null;
+  // const EndDateWithISO =
+  //   endDate && endDate instanceof Date ? endDate.toISOString() : null;
+
+  // console.log(location);
+  // console.log(StartDateWithISO);
+  // console.log(EndDateWithISO);
+  // console.log(startDate.toISOString());
+  // console.log(endDate.toISOString());
 
   // Initialize the query
   let query = supabase.from("Events").select("*").eq("event_type", event_type);
 
   // Apply filters
   if (location) query = query.eq("location", location);
-  if (StartDateWithISO) query = query.gte("date", StartDateWithISO); // Start date filter
-  if (EndDateWithISO) query = query.lte("date", EndDateWithISO); // End date filter
+  if (startDate) query = query.gte("date", startDate); // Start date filter
+  if (endDate) query = query.lte("date", endDate); // End date filter
 
   // Execute the query
   const { data, error } = await query;
@@ -259,7 +265,7 @@ export async function createTickets(
       order_id,
       event_id: Number(event_id),
       user_id: Number(user_id),
-      status: false,
+      status: true,
       attendee_firstname: firstName,
       attendee_lastname: lastName,
       price: String(totalPrice),
