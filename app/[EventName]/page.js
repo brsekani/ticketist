@@ -10,7 +10,11 @@ import ArtExhibitsImage from "@/public/artExhibition.jpg";
 import FoodFestivalsImage from "@/public/foodFestival.jpg";
 import MusicFestivalsImage from "@/public/musicFestivalImage.jpg";
 import NatureTripsImage from "@/public/natureTripImage.jpg";
-import { getEvents, getEventsByType } from "../_lib/date-service";
+import {
+  getAllLocation,
+  getEvents,
+  getEventsByType,
+} from "../_lib/date-service";
 import { Suspense } from "react";
 import Spinner from "../_components/Spinner";
 
@@ -27,6 +31,15 @@ const EventTypeList = dynamic(() => import("../_components/EventTypeList"), {
 
 export default async function Page({ params }) {
   const { EventName } = await params;
+  const locations = await getAllLocation();
+  console.log(locations);
+
+  const uniqueLocations = Array.from(
+    new Set(locations.map((item) => item.location)) // Extract unique location names
+  );
+
+  console.log(uniqueLocations);
+
   const decodedEventName = decodeURIComponent(EventName);
 
   const getImage = (type) => {
@@ -76,7 +89,7 @@ export default async function Page({ params }) {
       </div>
 
       {/* Render lazy-loaded client component */}
-      <LocationDateSearch />
+      <LocationDateSearch locations={uniqueLocations} />
 
       <Suspense
         fallback={

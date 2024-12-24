@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { SlCalender } from "react-icons/sl";
 import { FaLocationDot } from "react-icons/fa6";
 
-export default function LocationDateSearch() {
+export default function LocationDateSearch({ locations }) {
   const router = useRouter();
 
   // States
@@ -57,14 +57,7 @@ export default function LocationDateSearch() {
             leftSectionPointerEvents="none"
             value={location}
             onChange={(event) => setLocation(event.currentTarget.value)}
-            data={[
-              "ALL",
-              "New York",
-              "Los Angeles",
-              "Chicago",
-              "Miami",
-              "San Francisco",
-            ]}
+            data={["All", ...locations]}
             placeholder="Select Location"
             radius="md"
             size="sm"

@@ -35,6 +35,16 @@ export async function getEventsByLocation(location) {
   return data;
 }
 
+export async function getAllLocation() {
+  const { data, error } = await supabase.from("Events").select("location");
+
+  // For testing
+  // await new Promise((res) => setTimeout(res, 2000));
+  if (error) throw new Error("Event can not be loaded");
+
+  return data;
+}
+
 export async function getEventsByType(
   event_type,
   filters = { location: "", startDate: null, endDate: null }
@@ -42,7 +52,7 @@ export async function getEventsByType(
   console.log(filters);
 
   const { location: originalLocation, startDate, endDate } = filters;
-  const location = originalLocation === "ALL" ? "" : originalLocation;
+  const location = originalLocation === "All" ? "" : originalLocation;
 
   // Validate and convert startDate and endDate to ISO strings if valid
   // const StartDateWithISO =
