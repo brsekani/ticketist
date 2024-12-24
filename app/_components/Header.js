@@ -11,7 +11,7 @@ import Profile from "./Profile";
 import { auth, signOut } from "../_lib/auth";
 import { signOutAction } from "../_lib/actions";
 
-function Header({ session }) {
+function Header({ session, locations }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const loginedIn = session?.user;
@@ -179,7 +179,12 @@ function Header({ session }) {
         )}
       </header>
 
-      <Profile opened={opened} close={close} session={session} />
+      <Profile
+        opened={opened}
+        close={close}
+        session={session}
+        locations={locations}
+      />
     </>
   );
 }

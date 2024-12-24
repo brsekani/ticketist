@@ -2,7 +2,7 @@ import { Drawer } from "@mantine/core";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-function Profile({ opened, close, session }) {
+function Profile({ opened, close, session, locations }) {
   const countryFlags = {
     US: "🇺🇸",
     CA: "🇨🇦",
@@ -105,16 +105,9 @@ function Profile({ opened, close, session }) {
                   <option value="" disabled>
                     Select your country
                   </option>
-                  <option value="US">United States</option>
-                  <option value="CA">Canada</option>
-                  <option value="GB">United Kingdom</option>
-                  <option value="AU">Australia</option>
-                  <option value="DE">Germany</option>
-                  <option value="FR">France</option>
-                  <option value="IN">India</option>
-                  <option value="JP">Japan</option>
-                  <option value="CN">China</option>
-                  <option value="NG">Nigeria</option>
+                  {locations.map((location, i) => (
+                    <option key={i}>{location}</option>
+                  ))}
                 </Field>
                 {values.location && (
                   <span className="text-2xl">
