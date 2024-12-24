@@ -1,5 +1,6 @@
 import QRCode from "qrcode";
 import { supabase } from "./supabase";
+import { revalidatePath } from "next/cache";
 
 export async function getEvents() {
   const { data, error } = await supabase.from("Events").select("*");
@@ -45,46 +46,110 @@ export async function getAllLocation() {
   return data;
 }
 
+// export async function getEventsByType(
+//   event_type,
+//   filters = { location: "", startDate: null, endDate: null }
+// ) {
+//   console.log(filters);
+
+//   const { location: originalLocation, startDate, endDate } = filters;
+//   const location = originalLocation === "All" ? "" : originalLocation;
+
+//   // Validate and convert startDate and endDate to ISO strings if valid
+//   // const StartDateWithISO =
+//   //   startDate && startDate instanceof Date ? startDate.toISOString() : null;
+//   // const EndDateWithISO =
+//   //   endDate && endDate instanceof Date ? endDate.toISOString() : null;
+
+//   // console.log(location);
+//   // console.log(StartDateWithISO);
+//   // console.log(EndDateWithISO);
+//   // console.log(startDate.toISOString());
+//   // console.log(endDate.toISOString());
+
+//   // Initialize the query
+//   let query = supabase.from("Events").select("*").eq("event_type", event_type);
+
+//   // Apply filters
+//   if (location) query = query.eq("location", location);
+//   if (startDate) query = query.gte("date", startDate); // Start date filter
+//   if (endDate) query = query.lte("date", endDate); // End date filter
+
+//   // Execute the query
+//   const { data, error } = await query;
+
+//   // Handle errors
+//   if (error) {
+//     console.error("Error fetching events by type:", error.message);
+//     throw new Error(`Failed to load events of type ${event_type}`);
+//   }
+
+//   // Return the fetched data
+//   return data;
+// }
+
 export async function getEventsByType(
   event_type,
-  filters = { location: "", startDate: null, endDate: null }
+  filters = { location: "", startDate: null, endDate: null },
+  user_id = nu
 ) {
-  console.log(filters);
+  console.log(user_id);
+  console.log(event_type);
 
   const { location: originalLocation, startDate, endDate } = filters;
   const location = originalLocation === "All" ? "" : originalLocation;
 
-  // Validate and convert startDate and endDate to ISO strings if valid
-  // const StartDateWithISO =
-  //   startDate && startDate instanceof Date ? startDate.toISOString() : null;
-  // const EndDateWithISO =
-  //   endDate && endDate instanceof Date ? endDate.toISOString() : null;
-
-  // console.log(location);
-  // console.log(StartDateWithISO);
-  // console.log(EndDateWithISO);
-  // console.log(startDate.toISOString());
-  // console.log(endDate.toISOString());
-
-  // Initialize the query
+  // Initialize the query for fetching events
   let query = supabase.from("Events").select("*").eq("event_type", event_type);
 
-  // Apply filters
+  // Apply filters if provided
   if (location) query = query.eq("location", location);
   if (startDate) query = query.gte("date", startDate); // Start date filter
   if (endDate) query = query.lte("date", endDate); // End date filter
 
-  // Execute the query
-  const { data, error } = await query;
+  // Execute the query to get events
+  const { data: eventsData, error: eventsError } = await query;
 
-  // Handle errors
-  if (error) {
-    console.error("Error fetching events by type:", error.message);
+  // Handle errors for fetching events
+  if (eventsError) {
+    console.error("Error fetching events by type:", eventsError.message);
     throw new Error(`Failed to load events of type ${event_type}`);
   }
 
-  // Return the fetched data
-  return data;
+  // If user is logged in, fetch the user's favorites
+  if (user_id) {
+    const { data: favoritesData, error: favoritesError } = await supabase
+      .from("Favorites")
+      .select("event_id")
+      .eq("user_id", user_id);
+
+    console.log(favoritesData);
+
+    // Handle errors for fetching favorites
+    if (favoritesError) {
+      console.error("Error fetching favorites:", favoritesError.message);
+      throw new Error("Failed to load user's favorites");
+    }
+
+    // Get the list of favorite event IDs
+    const favoriteEventIds = favoritesData.map((fav) => fav.event_id);
+
+    // Add the isFavorite property to each event based on user's favorites
+    const eventsWithFavorites = eventsData.map((event) => ({
+      ...event,
+      isFavorite: favoriteEventIds.includes(event.event_id),
+    }));
+
+    console.log(eventsData);
+    console.log(favoritesData);
+    console.log(favoriteEventIds);
+    console.log(eventsWithFavorites);
+
+    return eventsWithFavorites;
+  }
+
+  // If no user is logged in, return the events without isFavorite
+  return eventsData;
 }
 
 export async function searchByInput(query) {
@@ -295,4 +360,24 @@ export async function createTickets(
 
   console.log("Inserted data:", data);
   return data;
+}
+
+export async function toggleFavorite(user_id, event_id, isFavorite) {
+  console.log("start");
+  console.log(user_id, event_id, isFavorite);
+  const action = isFavorite ? "delete" : "insert";
+  const table = "Favorites";
+
+  const { error } = await supabase
+    .from(table)
+    [action]({ user_id: user_id, event_id: event_id });
+
+  if (error) {
+    console.error("Error toggling favorite:", error);
+    throw error;
+  }
+
+  console.log("done");
+  // revalidatePath("/Concert");
+  // return data;
 }
