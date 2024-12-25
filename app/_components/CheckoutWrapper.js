@@ -58,15 +58,12 @@ function CheckoutWrapper({ params, user, event_id }) {
       const hasErrors = errors.some((error) => Object.keys(error).length > 0);
 
       if (hasErrors) {
-        console.error("Validation errors:", errors);
-        alert("Please fix the form validation errors before proceeding.");
         return;
       }
 
       // Step 2: Prepare Data and Lock Scrolling
       document.body.style.overflow = "hidden";
       const ticketData = formikRefs.current.map((formik) => formik.values);
-      console.log("Collected ticket data:", ticketData);
 
       // Step 3: Initialize Payment Integration
       const handler = window.PaystackPop.setup({
@@ -76,9 +73,6 @@ function CheckoutWrapper({ params, user, event_id }) {
         currency: "NGN",
         callback: (response) => {
           try {
-            console.log("Payment successful:", response);
-            alert("Payment successful! Reference: " + response.reference);
-
             // Step 4: Generate Tickets After Payment
             const quantity = ticketData.length; // Number of tickets
             const email = user.email;
@@ -92,21 +86,20 @@ function CheckoutWrapper({ params, user, event_id }) {
               ticketData
             );
 
-            toast.success("Tickets generated successfully.", {
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: false,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              transition: Bounce,
-            });
-
-            console.log("Tickets generated successfully:", tickets);
-
-            alert("Tickets have been generated and sent to Supabase!");
+            toast.success(
+              "Your tickets have been successfully generated! Check them out in 'My Tickets.",
+              {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+              }
+            );
           } catch (err) {
             console.error("Error generating tickets:", err.message);
             alert("Payment succeeded, but ticket generation failed.");
@@ -128,9 +121,9 @@ function CheckoutWrapper({ params, user, event_id }) {
     }
   };
 
-  const handleSubmit = (values) => {
-    console.log(values); // Your submission logic
-  };
+  // const handleSubmit = (values) => {
+  //   console.log(values); // Your submission logic
+  // };
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -196,7 +189,7 @@ function CheckoutWrapper({ params, user, event_id }) {
                 [`lastName_${ticketNumber}`]: "",
               }}
               validationSchema={getTicketValidationSchema(ticketNumber)} // Use dynamic schema
-              onSubmit={handleSubmit}
+              // onSubmit={handleSubmit}
             >
               {() => (
                 <Form>

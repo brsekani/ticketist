@@ -16,22 +16,34 @@ export async function signOutAction() {
   });
 }
 
-// export async function toggleFavorite(user_id, event_id, isFavorite) {
-//   console.log("start");
-//   console.log(user_id, event_id, isFavorite);
-//   const action = isFavorite ? "delete" : "insert";
-//   const table = "Favorites";
+export async function toggleFavorite(user_id, event_id, isFavorite) {
+  try {
+    if (isFavorite) {
+      // Delete the favorite entry
+      const { error } = await supabase
+        .from("Favorites")
+        .delete()
+        .eq("user_id", user_id)
+        .eq("event_id", event_id);
 
-//   const { error } = await supabase
-//     .from(table)
-//     [action]({ user_id: user_id, event_id: event_id });
+      if (error) {
+        throw error;
+      }
+    } else {
+      // Insert a new favorite entry
+      const { data, error } = await supabase
+        .from("Favorites")
+        .insert([{ user_id, event_id }])
+        .select();
 
-//   if (error) {
-//     console.error("Error toggling favorite:", error);
-//     throw error;
-//   }
+      if (error) {
+        throw error;
+      }
+    }
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+    throw error;
+  }
 
-//   console.log("done");
-//   revalidatePath("/Concert");
-//   // return data;
-// }
+  // revalidatePath("/Movies");
+}

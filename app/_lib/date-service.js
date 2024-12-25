@@ -16,24 +16,53 @@ export async function getEvent(event_id) {
     .single();
 
   if (error) {
-    console.log(error);
     throw new Error("Event can not be loaded");
   }
 
   return data;
 }
 
-export async function getEventsByLocation(location) {
-  const { data, error } = await supabase
-    .from("Events")
-    .select("*")
-    .eq("location", location);
+export async function getEventsByLocation(location, user_id) {
+  try {
+    // Fetch events by location
+    const { data: eventsData, error: eventsError } = await supabase
+      .from("Events")
+      .select("*")
+      .eq("location", location);
 
-  // For testing
-  // await new Promise((res) => setTimeout(res, 2000));
-  if (error) throw new Error("Event can not be loaded");
+    if (eventsError) {
+      console.error("Error fetching events by location:", eventsError.message);
+      throw new Error("Events cannot be loaded");
+    }
 
-  return data;
+    // If no user is logged in, return the events without favorites
+    if (!user_id) {
+      return eventsData;
+    }
+
+    // Fetch user's favorites
+    const { data: favoritesData, error: favoritesError } = await supabase
+      .from("Favorites")
+      .select("event_id")
+      .eq("user_id", user_id);
+
+    if (favoritesError) {
+      console.error("Error fetching favorites:", favoritesError.message);
+      throw new Error("Failed to load user's favorites");
+    }
+
+    // Mark events as favorites based on user's favorites
+    const favoriteEventIds = favoritesData.map((fav) => fav.event_id);
+    const eventsWithFavorites = eventsData.map((event) => ({
+      ...event,
+      isFavorite: favoriteEventIds.includes(event.event_id),
+    }));
+
+    return eventsWithFavorites;
+  } catch (error) {
+    console.error("Error in getEventsByLocation:", error.message);
+    throw error;
+  }
 }
 
 export async function getAllLocation() {
@@ -46,56 +75,11 @@ export async function getAllLocation() {
   return data;
 }
 
-// export async function getEventsByType(
-//   event_type,
-//   filters = { location: "", startDate: null, endDate: null }
-// ) {
-//   console.log(filters);
-
-//   const { location: originalLocation, startDate, endDate } = filters;
-//   const location = originalLocation === "All" ? "" : originalLocation;
-
-//   // Validate and convert startDate and endDate to ISO strings if valid
-//   // const StartDateWithISO =
-//   //   startDate && startDate instanceof Date ? startDate.toISOString() : null;
-//   // const EndDateWithISO =
-//   //   endDate && endDate instanceof Date ? endDate.toISOString() : null;
-
-//   // console.log(location);
-//   // console.log(StartDateWithISO);
-//   // console.log(EndDateWithISO);
-//   // console.log(startDate.toISOString());
-//   // console.log(endDate.toISOString());
-
-//   // Initialize the query
-//   let query = supabase.from("Events").select("*").eq("event_type", event_type);
-
-//   // Apply filters
-//   if (location) query = query.eq("location", location);
-//   if (startDate) query = query.gte("date", startDate); // Start date filter
-//   if (endDate) query = query.lte("date", endDate); // End date filter
-
-//   // Execute the query
-//   const { data, error } = await query;
-
-//   // Handle errors
-//   if (error) {
-//     console.error("Error fetching events by type:", error.message);
-//     throw new Error(`Failed to load events of type ${event_type}`);
-//   }
-
-//   // Return the fetched data
-//   return data;
-// }
-
 export async function getEventsByType(
   event_type,
   filters = { location: "", startDate: null, endDate: null },
-  user_id = nu
+  user_id = null
 ) {
-  console.log(user_id);
-  console.log(event_type);
-
   const { location: originalLocation, startDate, endDate } = filters;
   const location = originalLocation === "All" ? "" : originalLocation;
 
@@ -107,53 +91,46 @@ export async function getEventsByType(
   if (startDate) query = query.gte("date", startDate); // Start date filter
   if (endDate) query = query.lte("date", endDate); // End date filter
 
-  // Execute the query to get events
-  const { data: eventsData, error: eventsError } = await query;
+  try {
+    // Fetch events from the database
+    const { data: eventsData, error: eventsError } = await query;
 
-  // Handle errors for fetching events
-  if (eventsError) {
-    console.error("Error fetching events by type:", eventsError.message);
-    throw new Error(`Failed to load events of type ${event_type}`);
-  }
+    if (eventsError) {
+      console.error("Error fetching events by type:", eventsError.message);
+      throw new Error(`Failed to load events of type ${event_type}`);
+    }
 
-  // If user is logged in, fetch the user's favorites
-  if (user_id) {
+    // If no user is logged in, return events as they are
+    if (!user_id) {
+      return eventsData;
+    }
+
+    // If user is logged in, fetch favorites
     const { data: favoritesData, error: favoritesError } = await supabase
       .from("Favorites")
       .select("event_id")
       .eq("user_id", user_id);
 
-    console.log(favoritesData);
-
-    // Handle errors for fetching favorites
     if (favoritesError) {
       console.error("Error fetching favorites:", favoritesError.message);
       throw new Error("Failed to load user's favorites");
     }
 
-    // Get the list of favorite event IDs
+    // Mark events as favorites if they match the user's favorites
     const favoriteEventIds = favoritesData.map((fav) => fav.event_id);
-
-    // Add the isFavorite property to each event based on user's favorites
     const eventsWithFavorites = eventsData.map((event) => ({
       ...event,
       isFavorite: favoriteEventIds.includes(event.event_id),
     }));
 
-    console.log(eventsData);
-    console.log(favoritesData);
-    console.log(favoriteEventIds);
-    console.log(eventsWithFavorites);
-
     return eventsWithFavorites;
+  } catch (error) {
+    console.error("Error in getEventsByType:", error.message);
+    throw error;
   }
-
-  // If no user is logged in, return the events without isFavorite
-  return eventsData;
 }
 
 export async function searchByInput(query) {
-  console.log(query);
   const { data, error } = await supabase
     .from("Events") // Replace with your table name
     .select("*") // Select required fields
@@ -190,12 +167,9 @@ export async function getUser(email) {
 }
 
 export async function createUser(newGuest) {
-  console.log(newGuest);
-
   const { data, error } = await supabase.from("Users").insert([newGuest]); // Select only the image column
 
   if (error) {
-    console.log(error);
     throw new Error("user could not be created");
   }
 
@@ -203,7 +177,6 @@ export async function createUser(newGuest) {
 }
 
 export async function getTickets(user_id) {
-  console.log(user_id);
   const { data, error } = await supabase
     .from("Tickets")
     .select(
@@ -212,17 +185,26 @@ export async function getTickets(user_id) {
     .eq("user_id", user_id); // Select only the image column
 
   if (error) {
-    console.log(error);
     throw new Error("Error getiing tickets");
   }
 
-  console.log(data);
+  return data;
+}
+
+export async function getFavourites(user_id) {
+  const { data, error } = await supabase
+    .from("Favorites")
+    .select("*, event_id(*)")
+    .eq("user_id", user_id);
+
+  if (error) {
+    throw new Error("Error getiing favorites");
+  }
 
   return data;
 }
 
 export async function getTicket(ticket_id) {
-  console.log(ticket_id);
   const { data, error } = await supabase
     .from("Tickets")
     .select(
@@ -231,11 +213,8 @@ export async function getTicket(ticket_id) {
     .eq("ticket_id", ticket_id); // Select only the image column
 
   if (error) {
-    console.log(error);
     throw new Error("Error getiing tickets");
   }
-
-  console.log(data.at(0));
 
   return data.at(0);
 }
@@ -243,7 +222,7 @@ export async function getTicket(ticket_id) {
 // Function to generate a unique alphanumeric code
 function generateUniqueCode() {
   const randomCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-  console.log(randomCode);
+
   return randomCode;
 }
 
@@ -259,8 +238,6 @@ async function ensureUniqueCode() {
       .from("Tickets")
       .select("unique_code")
       .eq("unique_code", code);
-
-    console.log(data, error);
 
     if (error) {
       console.error("Error checking for duplicate codes:", error);
@@ -348,8 +325,6 @@ export async function createTickets(
     };
   });
 
-  console.log("Tickets to insert:", tickets);
-
   // Step 4: Insert tickets into the Tickets table
   const { data, error } = await supabase.from("Tickets").insert(tickets);
 
@@ -358,26 +333,6 @@ export async function createTickets(
     throw new Error("Error saving tickets.");
   }
 
-  console.log("Inserted data:", data);
+  "Inserted data:", data;
   return data;
-}
-
-export async function toggleFavorite(user_id, event_id, isFavorite) {
-  console.log("start");
-  console.log(user_id, event_id, isFavorite);
-  const action = isFavorite ? "delete" : "insert";
-  const table = "Favorites";
-
-  const { error } = await supabase
-    .from(table)
-    [action]({ user_id: user_id, event_id: event_id });
-
-  if (error) {
-    console.error("Error toggling favorite:", error);
-    throw error;
-  }
-
-  console.log("done");
-  // revalidatePath("/Concert");
-  // return data;
 }

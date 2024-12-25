@@ -17,8 +17,6 @@ function Header({ session, locations }) {
   const loginedIn = session?.user;
   const showDownRef = useRef();
 
-  console.log(session);
-
   useEffect(() => {
     const handleClickOutOutside = (e) => {
       if (showDownRef.current && !showDownRef.current.contains(e.target)) {
@@ -58,7 +56,10 @@ function Header({ session, locations }) {
                 My Tickets
               </li>
             </Link>
-            <li className="cursor-pointer hover:text-[#32BC9B]">Help</li>
+
+            <Link href={"/Favourite"}>
+              <li className="cursor-pointer hover:text-[#32BC9B]">Favourite</li>
+            </Link>
           </ul>
           {loginedIn ? (
             <Menu trigger="hover" shadow="md" width={150}>
@@ -130,13 +131,14 @@ function Header({ session, locations }) {
                 </li>
               </Link>
 
-              {/* Help Item */}
-              <li
-                className="cursor-pointer hover:text-[#32BC9B] transition-all duration-300 ease-in-out w-full text-center py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Help
-              </li>
+              <Link href={"/Favourite"}>
+                <li
+                  className="cursor-pointer hover:text-[#32BC9B] transition-all duration-300 ease-in-out w-full text-center py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Favourite
+                </li>
+              </Link>
 
               {/* Conditional Menu: User Profile or Sign-in Button */}
               {loginedIn ? (

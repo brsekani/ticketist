@@ -5,8 +5,6 @@ import EventSearch from "./EventSearch";
 import { auth } from "../_lib/auth";
 
 async function Hero() {
-  const sessionData = await auth();
-  console.log(sessionData);
   return (
     <div className="relative w-full h-[80vh]">
       {/* Hero Background Image */}

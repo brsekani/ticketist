@@ -10,7 +10,7 @@ import { auth } from "./app/_lib/auth";
 export const middleware = auth;
 
 export const config = {
-  matcher: ["/:base/:id/Checkout", "/myTickets"],
+  matcher: ["/:base/:id/Checkout", "/myTickets", "/Favourite"],
 };
 
 // import { NextResponse } from "next/server";
