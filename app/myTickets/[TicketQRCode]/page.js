@@ -7,7 +7,6 @@ export default async function TicketQRCodePage({ params }) {
   const { TicketQRCode } = await params;
 
   const data = await getTicket(TicketQRCode);
-  console.log(data);
 
   const eventDate = parseISO(data.event_id.date);
   const formattedDate = format(eventDate, "MMMM dd, yyyy"); // Example: December 10, 2024

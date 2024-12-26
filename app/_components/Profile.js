@@ -31,7 +31,6 @@ function Profile({ opened, close, session, locations }) {
   });
 
   const handleSubmit = async (values) => {
-    console.log("Form Submitted", values);
     close(); // Close the drawer after successful submission
   };
 

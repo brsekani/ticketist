@@ -17,6 +17,7 @@ import {
 } from "../_lib/date-service";
 import { Suspense } from "react";
 import Spinner from "../_components/Spinner";
+import { auth } from "../_lib/auth";
 
 // Lazy-load components
 const LocationDateSearch = dynamic(
@@ -30,15 +31,15 @@ const EventTypeList = dynamic(() => import("../_components/EventTypeList"), {
 });
 
 export default async function Page({ params }) {
+  const session = await auth();
   const { EventName } = await params;
   const locations = await getAllLocation();
-  console.log(locations);
+
+  const user = session?.user;
 
   const uniqueLocations = Array.from(
     new Set(locations.map((item) => item.location)) // Extract unique location names
   );
-
-  console.log(uniqueLocations);
 
   const decodedEventName = decodeURIComponent(EventName);
 
@@ -98,7 +99,7 @@ export default async function Page({ params }) {
           </div>
         }
       >
-        <EventTypeList eventName={decodedEventName} />
+        <EventTypeList eventName={decodedEventName} user={user} />
       </Suspense>
     </div>
   );

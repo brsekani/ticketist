@@ -4,12 +4,18 @@ import { Carousel } from "@mantine/carousel";
 import Image from "next/image";
 import concertImage from "../../public/concertImage.jpg";
 import { format, isToday, isTomorrow, isThisWeek, parseISO } from "date-fns";
-import { CiHeart } from "react-icons/ci";
+import { FaHeart } from "react-icons/fa6";
 import Link from "next/link";
+import { useState } from "react";
+import { toggleFavorite } from "../_lib/actions";
+import { toast } from "react-toastify";
+import { redirect } from "next/navigation";
 
 const tabs = ["All Events", "Today", "Tomorrow", "This Week"];
 
-function EventTabs({ events, location }) {
+function EventTabs({ eventsData, location, user_id }) {
+  const [events, setEvents] = useState(eventsData);
+
   const getFilteredEvents = (filter) => {
     return events.filter((event) => {
       // Parse the date string into a Date object
@@ -22,6 +28,46 @@ function EventTabs({ events, location }) {
       return true;
     });
   };
+
+  function handleFav(user_id, event_id, isFavorite) {
+    if (!user_id) redirect("/login");
+
+    // Optimistic UI update
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.event_id === event_id
+          ? { ...event, isFavorite: !isFavorite }
+          : event
+      )
+    );
+
+    toast(isFavorite ? "Removed from Favorites" : "Added to Favorites", {
+      style: {
+        background: isFavorite ? "#FF6F61" : "#32BC9B", // Red for Remove, Green for Add
+        color: "#fff", // White text
+        fontSize: "16px", // Font size for readability
+        fontWeight: "500", // Slightly bold text
+        padding: "12px 20px", // Spacing for content
+        borderRadius: "8px", // Smooth rounded corners
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
+        transition: "all 0.3s ease-in-out", // Smooth transition for appearance
+      },
+      icon: isFavorite ? "❌" : "❤️", // Red X for Remove, Heart for Add
+      autoClose: 1000,
+      position: "top-right", // Positioning of the toast
+      hideProgressBar: true, // No progress bar
+    });
+
+    // Perform the toggle operation
+    toggleFavorite(user_id, event_id, isFavorite).catch(() => {
+      // Revert the optimistic update in case of an error
+      setEvents((prevEvents) =>
+        prevEvents.map((event) =>
+          event.event_id === event_id ? { ...event, isFavorite } : event
+        )
+      );
+    });
+  }
 
   const renderEventCard = (event, i) => {
     const eventDate = parseISO(event.date);
@@ -43,8 +89,15 @@ function EventTabs({ events, location }) {
             />
           </div>
 
-          <div className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5  hover:scale-125 transition-transform duration-300 border border-black">
-            <CiHeart />
+          <div
+            role="button"
+            aria-label={`Mark ${event.name} as ${
+              event.isFavorite ? "unfavorite" : "favorite"
+            }`}
+            className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black"
+            onClick={() => handleFav(user_id, event.event_id, event.isFavorite)}
+          >
+            <FaHeart size={20} color={event.isFavorite ? "#32BC9B" : "gray"} />
           </div>
 
           <div className="flex flex-col justify-between gap-2 p-4">

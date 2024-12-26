@@ -66,8 +66,6 @@ export default function TicketsSection({
         Total: ₦{(ticketPrice * quantity).toLocaleString()}
       </div>
 
-      {/* Buy Now Button */}
-      {console.log(typeof eventPrice)}
       {session?.user ? (
         <div className="mt-8">
           <Link
