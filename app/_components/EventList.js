@@ -36,7 +36,7 @@ function EventList() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 p-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 px-1 py-6 sm:p-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
       {popularEvents.map((event, i) => (
         <Link key={i} href={`/${event.name}`}>
           <div className="relative flex flex-col items-center justify-center w-full px-6 py-4 transition-shadow border border-gray-200 rounded-lg cursor-pointer hover:shadow-md hover:border-[#32BC9B] group">

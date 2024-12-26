@@ -10,8 +10,11 @@ import { getTicketValidationSchema } from "../utils/schemas";
 import { useEffect } from "react";
 import { createTickets } from "../_lib/date-service";
 import { Bounce, toast } from "react-toastify";
+import { useDisclosure } from "@mantine/hooks";
+import SuccessfulTicketGenerated from "../Modals/SuccessfulTicketGenerated";
 
 function CheckoutWrapper({ params, user, event_id }) {
+  const [opened, { open, close }] = useDisclosure(true);
   const searchParams = useSearchParams();
 
   const EventImage = dynamic(() => import("@/app/_components/EventImage"), {
@@ -98,17 +101,19 @@ function CheckoutWrapper({ params, user, event_id }) {
                 progress: undefined,
                 theme: "light",
                 transition: Bounce,
-              }
+              },
+
+              open()
             );
           } catch (err) {
             console.error("Error generating tickets:", err.message);
-            alert("Payment succeeded, but ticket generation failed.");
+            toast("Payment succeeded, but ticket generation failed.");
           } finally {
             document.body.style.overflow = "auto"; // Re-enable scrolling
           }
         },
         onClose: () => {
-          alert("Payment canceled by user.");
+          toast("Payment canceled by user.");
           document.body.style.overflow = "auto";
         },
       });
@@ -116,7 +121,7 @@ function CheckoutWrapper({ params, user, event_id }) {
       handler.openIframe();
     } catch (error) {
       console.error("Unexpected error during payment flow:", error);
-      alert("An unexpected error occurred. Please try again.");
+      toast("An unexpected error occurred. Please try again.");
       document.body.style.overflow = "auto";
     }
   };
@@ -254,7 +259,7 @@ function CheckoutWrapper({ params, user, event_id }) {
 
           <div className="flex items-center justify-between font-semibold text-gray-800">
             <p>Total</p>
-            <p>${totalPrice}</p>
+            <p>₦{totalPrice}</p>
           </div>
 
           <button
@@ -266,6 +271,8 @@ function CheckoutWrapper({ params, user, event_id }) {
           </button>
         </div>
       </div>
+
+      <SuccessfulTicketGenerated opened={opened} close={close} />
     </div>
   );
 }

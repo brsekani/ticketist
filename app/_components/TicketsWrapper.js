@@ -25,7 +25,7 @@ function TicketsWrapper({ events }) {
   const expiredTickets = events.filter((event) => {
     const purchaseDate = new Date(event.purchase_date);
     const eventDate = new Date(event.event_id.date);
-    return event.status === false && purchaseDate > eventDate; // Unused ticket with expired event date
+    return purchaseDate > eventDate; // Unused ticket with expired event date
   });
 
   const renderNoTickets = (message) => (

@@ -41,7 +41,6 @@ export async function toggleFavorite(user_id, event_id, isFavorite) {
       }
     }
   } catch (error) {
-    console.error("Error toggling favorite:", error);
     throw error;
   }
 
