@@ -36,54 +36,61 @@ function NoEvents() {
 }
 
 function EventGrid({ events, handleFav, user_id }) {
-  <div className="grid w-full gap-6 p-4 mx-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center">
-    {events.map((event) => (
-      <div
-        key={event.event_id}
-        className="flex items-center justify-center w-full p-4"
-      >
-        <div className="flex flex-col w-full sm:w-[280px] overflow-hidden rounded-lg shadow-lg bg-white relative">
-          <div className="relative w-full h-48">
-            <Image
-              src={event.image_url || "/fallback-image.jpg"} // Fallback image
-              alt={event.name}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-t-lg"
-              placeholder="blur"
-              blurDataURL="/placeholder-blur.jpg" // Example placeholder image
-            />
-          </div>
+  return (
+    <div className="grid w-full gap-6 p-4 mx-auto sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center">
+      {events.map((event) => (
+        <div
+          key={event.event_id}
+          className="flex items-center justify-center w-full p-4"
+        >
+          <div className="flex flex-col w-full sm:w-[280px] overflow-hidden rounded-lg shadow-lg bg-white relative">
+            <div className="relative w-full h-48">
+              <Image
+                src={event.image_url || "/fallback-image.jpg"} // Fallback image
+                alt={event.name}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-t-lg"
+                placeholder="blur"
+                blurDataURL="/placeholder-blur.jpg" // Example placeholder image
+              />
+            </div>
 
-          <div
-            role="button"
-            aria-label={`Mark ${event.name} as ${
-              event.isFavorite ? "unfavorite" : "favorite"
-            }`}
-            className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black"
-            onClick={() => handleFav(user_id, event.event_id, event.isFavorite)}
-          >
-            <FaHeart size={20} color={event.isFavorite ? "#32BC9B" : "gray"} />
-          </div>
+            <div
+              role="button"
+              aria-label={`Mark ${event.name} as ${
+                event.isFavorite ? "unfavorite" : "favorite"
+              }`}
+              className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black"
+              onClick={() =>
+                handleFav(user_id, event.event_id, event.isFavorite)
+              }
+            >
+              <FaHeart
+                size={20}
+                color={event.isFavorite ? "#32BC9B" : "gray"}
+              />
+            </div>
 
-          <div className="flex flex-col justify-between gap-2 p-4">
-            <h2 className="text-base font-semibold text-gray-800">
-              {event.name}
-            </h2>
-            <p className="text-xs text-[#979797]">
-              {event.location} -{" "}
-              {format(new Date(event.date), "dd/MM/yyyy, h:mma")}
-            </p>
-            <Link href={`/${event.eventName}/${event.event_id}`}>
-              <button className="w-full py-2 mt-2 text-xs font-semibold bg-[#32BC9B] text-white rounded-3xl hover:bg-[#28a083] transition-colors">
-                Book Now
-              </button>
-            </Link>
+            <div className="flex flex-col justify-between gap-2 p-4">
+              <h2 className="text-base font-semibold text-gray-800">
+                {event.name}
+              </h2>
+              <p className="text-xs text-[#979797]">
+                {event.location} -{" "}
+                {format(new Date(event.date), "dd/MM/yyyy, h:mma")}
+              </p>
+              <Link href={`/${event.eventName}/${event.event_id}`}>
+                <button className="w-full py-2 mt-2 text-xs font-semibold bg-[#32BC9B] text-white rounded-3xl hover:bg-[#28a083] transition-colors">
+                  Book Now
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
-    ))}
-  </div>;
+      ))}
+    </div>
+  );
 }
 
 export default function EventTypeList({ eventName, user }) {
@@ -95,7 +102,8 @@ export default function EventTypeList({ eventName, user }) {
   const endDate = searchParamsClient.get("endDate") || "";
 
   const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Add loading state
+
   const user_id = user?.user_id;
 
   useEffect(() => {
