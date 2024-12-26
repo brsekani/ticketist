@@ -14,7 +14,7 @@ import { useDisclosure } from "@mantine/hooks";
 import SuccessfulTicketGenerated from "../Modals/SuccessfulTicketGenerated";
 
 function CheckoutWrapper({ params, user, event_id }) {
-  const [opened, { open, close }] = useDisclosure(true);
+  const [opened, { open, close }] = useDisclosure(false);
   const searchParams = useSearchParams();
 
   const EventImage = dynamic(() => import("@/app/_components/EventImage"), {
