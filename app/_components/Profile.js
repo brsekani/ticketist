@@ -113,8 +113,8 @@ function Profile({ opened, close, session, locations }) {
               />
 
               <p className="mt-2 text-sm text-gray-900">
-                Can't find your state? Choose the closest one to stay updated on
-                events near you.
+                Can&apos;t find your state? Choose the closest one to stay
+                updated on events near you.
               </p>
             </div>
 

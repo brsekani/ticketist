@@ -12,6 +12,7 @@ function EventSearch() {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [notFound, setNotFound] = useState(false);
+  const [isFocused, setIsFocused] = useState(false); // Track if input is focused
   const router = useRouter();
 
   // Fetch events based on query
@@ -56,7 +57,6 @@ function EventSearch() {
   useEffect(() => {
     if (notFound && !loading && searchTerm.length >= 3) {
       notifications.show({
-        // title: "No results found",
         message: `We couldn't find any events for "${searchTerm}".`,
         color: "red",
       });
@@ -65,6 +65,9 @@ function EventSearch() {
     }
   }, [notFound, loading, searchTerm]);
 
+  // Show the dropdown when there's a search term and results, and when the input is focused
+  const showDropdown = (data.length > 0 || loading) && isFocused;
+
   return (
     <div className="relative w-full max-w-lg mx-auto">
       <div className="relative flex items-center w-full rounded-full border border-gray-300 bg-white shadow-sm focus-within:ring-2 focus-within:ring-[#32BC9B] overflow-hidden">
@@ -72,6 +75,8 @@ function EventSearch() {
           type="text"
           value={searchTerm}
           onChange={(e) => handleChange(e.target.value)}
+          onFocus={() => setIsFocused(true)} // Focus handler
+          onBlur={() => setIsFocused(false)} // Blur handler
           placeholder="Search for Events..."
           className="w-full px-4 py-3 text-sm text-gray-700 focus:outline-none"
         />
@@ -91,25 +96,29 @@ function EventSearch() {
       </div>
 
       {/* Dropdown with event results */}
-      {data.length > 0 && (
+      {showDropdown && (
         <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg">
-          {data.map((event) => (
-            <div
-              key={event.event_id}
-              onClick={() => handleSelect(event)}
-              className="flex items-center p-4 cursor-pointer hover:bg-gray-100"
-            >
-              <Avatar src={event.image_url} size={40} radius="xl" />
-              <div className="ml-3 text-start">
-                <Text size="sm" weight={500} color="#32BC9B">
-                  {event.name}
-                </Text>
-                <Text size="xs" color="dimmed">
-                  {event.description}
-                </Text>
+          {data.length > 0 ? (
+            data.map((event) => (
+              <div
+                key={event.event_id}
+                onClick={() => handleSelect(event)}
+                className="flex items-center p-4 cursor-pointer hover:bg-gray-100"
+              >
+                <Avatar src={event.image_url} size={40} radius="xl" />
+                <div className="ml-3 text-start">
+                  <Text size="sm" weight={500} color="#32BC9B">
+                    {event.name}
+                  </Text>
+                  <Text size="xs" color="dimmed">
+                    {event.description}
+                  </Text>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className="p-4 text-center text-gray-500">No events found</div>
+          )}
         </div>
       )}
     </div>

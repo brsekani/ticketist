@@ -1,6 +1,7 @@
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { TiSocialFacebook } from "react-icons/ti";
 import { FaInstagram } from "react-icons/fa";
+import EventSearch from "./EventSearch";
 
 function Footer() {
   return (
@@ -11,7 +12,7 @@ function Footer() {
           <h3 className="text-xl font-semibold">Stay in touch with us</h3>
 
           {/* Search Input */}
-          <div className="relative w-full">
+          {/* <div className="relative w-full">
             <input
               type="text"
               placeholder="Search for events"
@@ -20,7 +21,9 @@ function Footer() {
             <button className="absolute top-1/2 right-2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-[#32BC9B] hover:bg-[#28a083] transition-colors">
               <IoIosArrowRoundForward className="text-white" />
             </button>
-          </div>
+          </div> */}
+
+          <EventSearch />
 
           {/* Social Media Icons */}
           <div className="flex gap-4">

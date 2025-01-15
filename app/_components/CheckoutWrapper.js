@@ -247,7 +247,7 @@ function CheckoutWrapper({ params, user, event_id }) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-gray-700">
               <p>{numberOfTickets} x General Admission</p>
-              <p>${totalPrice}</p>
+              <p>₦{totalPrice}</p>
             </div>
             {/* <div className="flex items-center justify-between text-gray-700">
               <p>Delivery - eTicket</p>
