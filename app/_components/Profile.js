@@ -1,25 +1,14 @@
 import { Drawer } from "@mantine/core";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { updateLocation } from "../_lib/actions";
+import { toast } from "react-toastify";
 
 function Profile({ opened, close, session, locations }) {
-  const countryFlags = {
-    US: "🇺🇸",
-    CA: "🇨🇦",
-    GB: "🇬🇧",
-    AU: "🇦🇺",
-    DE: "🇩🇪",
-    FR: "🇫🇷",
-    IN: "🇮🇳",
-    JP: "🇯🇵",
-    CN: "🇨🇳",
-    NG: "🇳🇬",
-  };
-
   const initialValues = {
     fullName: session?.user?.name,
     email: session?.user?.email,
-    location: "",
+    location: session?.user?.location || "",
   };
 
   const validationSchema = Yup.object({
@@ -30,8 +19,16 @@ function Profile({ opened, close, session, locations }) {
     location: Yup.string().required("Location is required"),
   });
 
-  const handleSubmit = async (values) => {
-    close(); // Close the drawer after successful submission
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      await updateLocation(session?.user?.user_id, values.location);
+      toast("Location updated successfully!");
+      close();
+    } catch (error) {
+      alert("Failed to update location. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -51,7 +48,7 @@ function Profile({ opened, close, session, locations }) {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values }) => (
+        {({ values, isSubmitting }) => (
           <Form className="space-y-4">
             {/* First Name */}
             <div>
@@ -61,7 +58,7 @@ function Profile({ opened, close, session, locations }) {
               <Field
                 name="fullName"
                 type="text"
-                placeholder="Enter your first name"
+                placeholder="Enter your full name"
                 className="w-full h-12 px-4 border border-gray-300 rounded-lg"
               />
               <ErrorMessage
@@ -102,31 +99,34 @@ function Profile({ opened, close, session, locations }) {
                   className="w-full h-12 px-4 border border-gray-300 rounded-lg"
                 >
                   <option value="" disabled>
-                    Select your country
+                    Select your state
                   </option>
                   {locations.map((location, i) => (
                     <option key={i}>{location}</option>
                   ))}
                 </Field>
-                {values.location && (
-                  <span className="text-2xl">
-                    {countryFlags[values.location]}
-                  </span>
-                )}
               </div>
               <ErrorMessage
                 name="location"
                 component="div"
                 className="text-sm text-red-600"
               />
+
+              <p className="mt-2 text-sm text-gray-900">
+                Can't find your state? Choose the closest one to stay updated on
+                events near you.
+              </p>
             </div>
 
             {/* Save Button */}
             <button
               type="submit"
-              className="w-full h-12 text-sm font-semibold text-white bg-[#32BC9B] rounded-lg shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out"
+              className={`w-full h-12 text-sm font-semibold text-white bg-[#32BC9B] rounded-lg shadow-md hover:bg-[#28a083] transition duration-200 ease-in-out ${
+                isSubmitting ? "cursor-not-allowed opacity-75" : ""
+              }`}
+              disabled={isSubmitting}
             >
-              Save Changes
+              {isSubmitting ? "Updating..." : "Save Changes"}
             </button>
           </Form>
         )}

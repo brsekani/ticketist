@@ -46,3 +46,24 @@ export async function toggleFavorite(user_id, event_id, isFavorite) {
 
   // revalidatePath("/Movies");
 }
+
+export async function updateLocation(user_id, location) {
+  console.log(user_id, location);
+  try {
+    const { data, error } = await supabase
+      .from("Users")
+      .update({ location })
+      .eq("user_id", user_id)
+      .select();
+
+    revalidatePath("/");
+
+    if (error) {
+      throw error; // Throw error for the caller to handle
+    }
+
+    return data; // Return the updated data
+  } catch (err) {
+    throw err; // Ensure the caller is aware of unexpected issues
+  }
+}

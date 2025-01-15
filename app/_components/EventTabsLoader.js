@@ -5,10 +5,9 @@ import { auth } from "../_lib/auth";
 export default async function EventTabsLoader() {
   const session = await auth();
   const user_id = session?.user?.user_id;
-  const location = "Abuja";
-  const eventsData = await getEventsByLocation(location, user_id);
+  const location = session?.user?.location || "Abuja";
 
-  return (
-    <EventTabs eventsData={eventsData} location={location} user_id={user_id} />
-  );
+  return <EventTabs location={location} user_id={user_id} />;
 }
+
+export const revalidate = 0;

@@ -6,7 +6,7 @@ import image from "@/public/concertImage.jpg";
 export default async function Page() {
   const { user } = await auth();
   const events = await getTickets(user.user_id);
-  console.log(events);
+
 
   // const events = [
   //   {

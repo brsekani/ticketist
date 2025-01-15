@@ -19,3 +19,23 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Global styles for skeleton loading */
+@keyframes pulse {
+  0% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #c0c0c0;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+
+.skeleton {
+  animation: pulse 1.5s infinite ease-in-out;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  display: inline-block;
+}

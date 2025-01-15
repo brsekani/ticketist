@@ -1,4 +1,5 @@
 "use client";
+
 import { Tab } from "@headlessui/react";
 import { Carousel } from "@mantine/carousel";
 import Image from "next/image";
@@ -6,19 +7,41 @@ import concertImage from "../../public/concertImage.jpg";
 import { format, isToday, isTomorrow, isThisWeek, parseISO } from "date-fns";
 import { FaHeart } from "react-icons/fa6";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toggleFavorite } from "../_lib/actions";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
+import { getEventsByLocation } from "../_lib/date-service";
+import Spinner from "./Spinner";
 
 const tabs = ["All Events", "Today", "Tomorrow", "This Week"];
 
-function EventTabs({ eventsData, location, user_id }) {
-  const [events, setEvents] = useState(eventsData);
+function EventTabs({ location, user_id }) {
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true); // Start loading
+      try {
+        const data = await getEventsByLocation(location, user_id);
+        setEvents(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false); // Stop loading after the data is fetched
+      }
+    };
+
+    fetchData();
+  }, [location, user_id]);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   const getFilteredEvents = (filter) => {
     return events.filter((event) => {
-      // Parse the date string into a Date object
       const eventDate = parseISO(event.date);
 
       if (filter === "Today") return isToday(eventDate);
@@ -32,7 +55,6 @@ function EventTabs({ eventsData, location, user_id }) {
   function handleFav(user_id, event_id, isFavorite) {
     if (!user_id) redirect("/login");
 
-    // Optimistic UI update
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
         event.event_id === event_id
@@ -43,24 +65,22 @@ function EventTabs({ eventsData, location, user_id }) {
 
     toast(isFavorite ? "Removed from Favorites" : "Added to Favorites", {
       style: {
-        background: isFavorite ? "#FF6F61" : "#32BC9B", // Red for Remove, Green for Add
-        color: "#fff", // White text
-        fontSize: "16px", // Font size for readability
-        fontWeight: "500", // Slightly bold text
-        padding: "12px 20px", // Spacing for content
-        borderRadius: "8px", // Smooth rounded corners
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
-        transition: "all 0.3s ease-in-out", // Smooth transition for appearance
+        background: isFavorite ? "#FF6F61" : "#32BC9B",
+        color: "#fff",
+        fontSize: "16px",
+        fontWeight: "500",
+        padding: "12px 20px",
+        borderRadius: "8px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        transition: "all 0.3s ease-in-out",
       },
-      icon: isFavorite ? "❌" : "❤️", // Red X for Remove, Heart for Add
+      icon: isFavorite ? "❌" : "❤️",
       autoClose: 1000,
-      position: "top-right", // Positioning of the toast
-      hideProgressBar: true, // No progress bar
+      position: "top-right",
+      hideProgressBar: true,
     });
 
-    // Perform the toggle operation
     toggleFavorite(user_id, event_id, isFavorite).catch(() => {
-      // Revert the optimistic update in case of an error
       setEvents((prevEvents) =>
         prevEvents.map((event) =>
           event.event_id === event_id ? { ...event, isFavorite } : event
@@ -69,12 +89,13 @@ function EventTabs({ eventsData, location, user_id }) {
     });
   }
 
-  const renderEventCard = (event, i) => {
+  const renderEventCard = (event) => {
     const eventDate = parseISO(event.date);
-    const formattedDate = format(eventDate, "MMM dd, yyyy"); // Example: December 10, 2024
-    const formattedTime = format(eventDate, "hh:mm a"); // Example: 04:30 PM
+    const formattedDate = format(eventDate, "MMM dd, yyyy");
+    const formattedTime = format(eventDate, "hh:mm a");
+
     return (
-      <div key={event.id} className="p-4">
+      <div key={event.event_id} className="p-4">
         <div className="flex flex-col w-[280px] overflow-hidden rounded-lg shadow-lg bg-white relative">
           <div className="relative w-full h-48">
             <Image
@@ -84,16 +105,11 @@ function EventTabs({ eventsData, location, user_id }) {
               objectFit="cover"
               className="rounded-t-lg"
               placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,[base64-string]" // Blurred placeholder data
+              blurDataURL="data:image/jpeg;base64,[base64-string]"
               priority
             />
           </div>
-
           <div
-            role="button"
-            aria-label={`Mark ${event.name} as ${
-              event.isFavorite ? "unfavorite" : "favorite"
-            }`}
             className="absolute flex items-center justify-center w-10 h-10 bg-white rounded-full cursor-pointer top-[53%] right-5 hover:scale-125 transition-transform duration-300 border border-black"
             onClick={() => handleFav(user_id, event.event_id, event.isFavorite)}
           >
@@ -105,7 +121,6 @@ function EventTabs({ eventsData, location, user_id }) {
               {event.name}
             </h2>
             <p className="text-xs text-gray-500">
-              {/* {event.location} - {format(event.created_at, "dd/MM/yyyy, h:mma")} */}
               {event.location} - {formattedDate} - {formattedTime}
             </p>
             <Link href={`/${event.event_type}/${event.event_id}`}>
@@ -169,9 +184,8 @@ function EventTabs({ eventsData, location, user_id }) {
         <Tab.Panels>
           {tabs.map((tab) => (
             <Tab.Panel key={tab} className="py-6">
-              {/* Check if there are events to display */}
               {getFilteredEvents(tab).length === 0 ? (
-                renderNoEventsMessage() // Show message if no events are found
+                renderNoEventsMessage()
               ) : (
                 <Carousel
                   slideSize="20%"
